@@ -1,0 +1,116 @@
+<template>
+    <div class="content">
+        <h1>Seller</h1>
+        <p>This is the Seller page.</p>
+        <AddDataForm/>
+        <button @click="getData">GetData</button>
+        <div class="sub-title">
+            <div>
+                <button @click="showPopup = true">เพิ่มข้อมูล</button>
+                <Popup :isVisible="showPopup" @close="showPopup = false" />
+            </div>
+            <div>
+                <input type="text" placeholder="Search">
+                <font-awesome-icon icon="search" />
+            </div>
+
+        </div>
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th id="cal1">ลำดับ</th>
+                        <th>รหัสผู้ฝากขาย</th>
+                        <th>ชื่อผู้ฝากขาย</th>
+                        <th>ตัวเลือก</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(item, index) in data.items" :key="index">
+                        <td>{{ index + 1 }}</td>
+                        <td>{{ item.seller_code }}</td>
+                        <td>{{ item.seller_name }}</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</template>
+
+<script>
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import AddDataForm from './forms/AddDataForm.vue'
+
+library.add(faSearch);
+import axios from 'axios';
+export default {
+    name: "seller",
+    components: {
+        AddDataForm
+    },
+    data() {
+        return {
+             data: []
+        };
+    },
+    methods: {
+        getData() {
+            axios
+                .get("https://localhost:7287/api/sellers")
+                .then((res) => (this.data = res.data))
+        },
+
+    }
+
+}
+
+</script>
+
+
+
+<style scoped>
+table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    height: 20%;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+
+}
+
+thead tr {
+    background-color: #646cfd;
+    color: #ffffff;
+    text-align: center;
+
+}
+
+th,
+td {
+    padding: 12px 15px;
+}
+
+tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+tbody tr:last-of-type {
+    border-bottom: 2px solid #009879;
+}
+
+tbody tr.active-row {
+    font-weight: bold;
+    color: #009879;
+}
+
+#cal1 {
+    width: 10%;
+}
+</style>
