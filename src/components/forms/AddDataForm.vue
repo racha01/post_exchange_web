@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <button @click="" id="open">
+        <button id="open">
             Click Me
         </button>
         <div class="model-container" id="model_container">
@@ -26,13 +26,6 @@ export default {
 const open = document.getElementById('open');
 const model_container = document.getElementById('model_container');
 const close = document.getElementById('close');
-
-open.addEventListener('cleck', () => {
-    model_container.classList.add('Show')
-})
-close.addEventListener('cleck', () => {
-    model_container.classList.remove('Show')
-})
 </script>
 
 <style scoped>

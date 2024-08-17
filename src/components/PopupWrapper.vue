@@ -25,7 +25,3 @@ const handleClickOutside = (event) => {
         showPopup.value = false
     }
 }
-
-onMounted(() => {
-    document.addEventListener("click", handleClickOutside)
-})

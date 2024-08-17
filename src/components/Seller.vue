@@ -2,18 +2,17 @@
     <div class="content">
         <h1>Seller</h1>
         <p>This is the Seller page.</p>
-        <AddDataForm/>
+        <AddDataForm />
         <button @click="getData">GetData</button>
         <div class="sub-title">
             <div>
-                <button @click="showPopup = true">เพิ่มข้อมูล</button>
-                <Popup :isVisible="showPopup" @close="showPopup = false" />
+                <button @click="showSellerAddModal">เพิ่มข้อมูล</button>
+                <SellerAddModal v-show="isSellerAddModalVisible" @close="closeModal" />
             </div>
             <div>
                 <input type="text" placeholder="Search">
                 <font-awesome-icon icon="search" />
             </div>
-
         </div>
         <div>
             <table>
@@ -30,7 +29,10 @@
                         <td>{{ index + 1 }}</td>
                         <td>{{ item.seller_code }}</td>
                         <td>{{ item.seller_name }}</td>
-                        <td></td>
+                        <td>
+                            <button @click="showSellerUpdateModal">แก้ไขข้อมูล</button>
+                            <SellerUpdateModal @update-data="fetchData" v-show="isSellerUpdateModalVisible" @close="closeModal" />
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -41,27 +43,55 @@
 <script>
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import AddDataForm from './forms/AddDataForm.vue'
+import SellerAddModal from './modals/SellerAddModal.vue'
+import SellerUpdateModal from './modals/SellerUpdateModal.vue'
 
 library.add(faSearch);
 import axios from 'axios';
 export default {
     name: "seller",
     components: {
-        AddDataForm
+        SellerAddModal,
+        SellerUpdateModal
     },
     data() {
         return {
-             data: []
+            data: [],
+            isSellerAddModalVisible: false,
+            isSellerUpdateModalVisible: false
         };
     },
+    mounted() {
+        this.fetchData();
+    },
     methods: {
+        async fetchData() {
+            try {
+                let response = axios
+                    .get("https://localhost:7287/api/sellers")
+                    .then((res) => (this.data = res.data))
+                let data = await response.json();
+                this.items = data;
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        },
+        
         getData() {
             axios
                 .get("https://localhost:7287/api/sellers")
                 .then((res) => (this.data = res.data))
         },
-
+        showSellerAddModal() {
+            this.isSellerAddModalVisible = true;
+        },
+        showSellerUpdateModal() {
+            this.isSellerUpdateModalVisible = true;
+        },
+        closeModal() {
+            this.isSellerAddModalVisible = false;
+            this.isSellerUpdateModalVisible = false;
+        }
     }
 
 }
