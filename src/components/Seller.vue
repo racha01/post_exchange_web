@@ -2,15 +2,13 @@
     <div class="content">
         <h1>Seller</h1>
         <p>This is the Seller page.</p>
-        <AddDataForm />
-        <button @click="getData">GetData</button>
         <div class="sub-title">
             <div>
-                <button @click="showSellerAddModal">เพิ่มข้อมูล</button>
-                <SellerAddModal v-show="isSellerAddModalVisible" @close="closeModal" />
+                <button class="sub-title-button" @click="showSellerAddModal">เพิ่มข้อมูล</button>
+                <SellerAddModal id="input-add-form" v-show="isSellerAddModalVisible" @close="closeModal" @data-updated="fetchData" />
             </div>
             <div>
-                <input type="text" placeholder="Search">
+                <input class="sub-title-input" type="text" placeholder="Search">
                 <font-awesome-icon icon="search" />
             </div>
         </div>
@@ -30,8 +28,8 @@
                         <td>{{ item.seller_code }}</td>
                         <td>{{ item.seller_name }}</td>
                         <td>
-                            <button @click="showSellerUpdateModal">แก้ไขข้อมูล</button>
-                            <SellerUpdateModal @update-data="fetchData" v-show="isSellerUpdateModalVisible" @close="closeModal" />
+                            <button @click="showSellerUpdateModal(item)">แก้ไขข้อมูล</button>
+                            <SellerUpdateModal :seller="seller" @seller-update="fetchData" v-show="isSellerUpdateModalVisible" @close="closeModal" />
                         </td>
                     </tr>
                 </tbody>
@@ -45,6 +43,7 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import SellerAddModal from './modals/SellerAddModal.vue'
 import SellerUpdateModal from './modals/SellerUpdateModal.vue'
+import { API_BASE_URL, ENDPOINTS } from './../../config';
 
 library.add(faSearch);
 import axios from 'axios';
@@ -58,7 +57,8 @@ export default {
         return {
             data: [],
             isSellerAddModalVisible: false,
-            isSellerUpdateModalVisible: false
+            isSellerUpdateModalVisible: false,
+            seller: {}
         };
     },
     mounted() {
@@ -68,7 +68,7 @@ export default {
         async fetchData() {
             try {
                 let response = axios
-                    .get("https://localhost:7287/api/sellers")
+                    .get(`${API_BASE_URL}/${ENDPOINTS.SELLERS}`)
                     .then((res) => (this.data = res.data))
                 let data = await response.json();
                 this.items = data;
@@ -76,17 +76,15 @@ export default {
                 console.error('Error fetching data:', error);
             }
         },
-        
-        getData() {
-            axios
-                .get("https://localhost:7287/api/sellers")
-                .then((res) => (this.data = res.data))
-        },
         showSellerAddModal() {
             this.isSellerAddModalVisible = true;
         },
-        showSellerUpdateModal() {
+        async showSellerUpdateModal(item) {
             this.isSellerUpdateModalVisible = true;
+            await axios
+                    .get(`${API_BASE_URL}/${ENDPOINTS.SELLERS}/${item.id}`)
+                    .then((res) => (this.seller = res.data))
+            this.$emit('seller', this.seller);
         },
         closeModal() {
             this.isSellerAddModalVisible = false;
