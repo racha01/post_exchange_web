@@ -5,7 +5,8 @@
         <div class="sub-title">
             <div>
                 <button class="sub-title-button" @click="showSellerAddModal">เพิ่มข้อมูล</button>
-                <SellerAddModal id="input-add-form" v-show="isSellerAddModalVisible" @close="closeModal" @data-updated="fetchData" />
+                <SellerAddModal :key="componentKey" id="input-add-form" v-show="isSellerAddModalVisible"
+                    @close="closeModal" @data-updated="fetchData" />
             </div>
             <div>
                 <input class="sub-title-input" type="text" placeholder="Search">
@@ -29,7 +30,8 @@
                         <td>{{ item.seller_name }}</td>
                         <td>
                             <button @click="showSellerUpdateModal(item)">แก้ไขข้อมูล</button>
-                            <SellerUpdateModal :seller="seller" @seller-update="fetchData" v-show="isSellerUpdateModalVisible" @close="closeModal" />
+                            <SellerUpdateModal :key="componentKey" :seller="seller" @seller-update="fetchData"
+                                v-show="isSellerUpdateModalVisible" @close="closeModal" />
                         </td>
                     </tr>
                 </tbody>
@@ -58,7 +60,8 @@ export default {
             data: [],
             isSellerAddModalVisible: false,
             isSellerUpdateModalVisible: false,
-            seller: {}
+            seller: {},
+            componentKey: 0
         };
     },
     mounted() {
@@ -78,20 +81,21 @@ export default {
         },
         showSellerAddModal() {
             this.isSellerAddModalVisible = true;
+            this.componentKey += 1;
         },
         async showSellerUpdateModal(item) {
             this.isSellerUpdateModalVisible = true;
             await axios
-                    .get(`${API_BASE_URL}/${ENDPOINTS.SELLERS}/${item.id}`)
-                    .then((res) => (this.seller = res.data))
+                .get(`${API_BASE_URL}/${ENDPOINTS.SELLERS}/${item.id}`)
+                .then((res) => (this.seller = res.data))
             this.$emit('seller', this.seller);
+            this.componentKey += 1;
         },
         closeModal() {
             this.isSellerAddModalVisible = false;
             this.isSellerUpdateModalVisible = false;
-        }
+        },
     }
-
 }
 
 </script>

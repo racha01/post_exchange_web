@@ -7,11 +7,11 @@
 
             <section class="modal-body">
                 <div>
-                    <label id="label-seller-code">รหัสผู้ฝากขาย</label>
-                    <input v-model="sellerCode" type="text">
+                    <label>รหัสผู้ฝากขาย</label>
+                    <input @input="updateToUppercase" v-model="sellerCode" type="text">
                 </div>
                 <div>
-                    <label id="label-seller-name">ชื่อผู้ฝากขาย</label>
+                    <label>ชื่อผู้ฝากขาย</label>
                     <input v-model="sellerName" type="text">
                 </div>
             </section>
@@ -46,6 +46,9 @@ export default {
         close() {
             this.$emit('close');
         },
+        updateToUppercase(event) {
+            event.target.value = event.target.value.toUpperCase();
+        }
     },
 }
 

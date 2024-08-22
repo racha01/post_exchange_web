@@ -4,15 +4,16 @@
             <header class="modal-header">
                 <p>แก้ไขข้อมูลผู้ฝากขายสินค้า</p>
             </header>
-            {{ seller }}
             <section class="modal-body">
                 <div>
                     <label>รหัสผู้ฝากขาย</label>
-                    <input v-model="sellerCode" type="text" :placeholder="seller.seller_code" @focus="clearInput">
+                    <input @input="updateToUppercase" ref="sellerCode" v-model="sellerCode" type="text"
+                        :placeholder="seller.seller_code" @focus="clearInput">
                 </div>
                 <div>
                     <label>ชื่อผู้ส่งฝากขาย</label>
-                    <input v-model="sellerName" type="text" :placeholder="seller.seller_name" @focus="clearInput">
+                    <input ref="sellerName" v-model="sellerName" type="text" :placeholder="seller.seller_name"
+                        @focus="clearInput">
                 </div>
 
             </section>
@@ -47,16 +48,13 @@ export default {
 
             res.data.json;
             this.$emit('seller-update', res.data.json);
-
-
             this.$emit('close');
         },
         close() {
             this.$emit('close');
         },
-        clearInput() {
-            this.sellerCode = null;
-            this.sellerName = null;
+        updateToUppercase(event) {
+            event.target.value = event.target.value.toUpperCase();
         }
     },
 }
