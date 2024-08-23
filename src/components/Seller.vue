@@ -38,6 +38,26 @@
                         </td>
                     </tr>
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4" id="footer-td">
+                            <div class="footer-content">
+                                <p>จำนวนแถวต่อหน้า</p>
+                                <select @change="handleSelection($event)">
+                                    <option>10</option>
+                                    <option>25</option>
+                                    <option>50</option>
+                                    <option>100</option>
+                                </select>
+                                <button @click="fetchData((pageNo - 1), pageSize)"
+                                    :disabled="data.has_previous_page == false">
+                                    < </button>
+                                        <button @click="fetchData((pageNo + 1), pageSize)"
+                                            :disabled="data.has_next_page == false"> > </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tfoot>
             </table>
         </div>
     </div>
@@ -48,13 +68,13 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import SellerAddModal from './modals/SellerAddModal.vue'
 import SellerUpdateModal from './modals/SellerUpdateModal.vue'
-import { API_BASE_URL, ENDPOINTS } from './../../config';
+import { API_BASE_URL, ENDPOINTS, PAGENERATION } from './../../config';
 
 library.add(faSearch);
 import axios from 'axios';
 export default {
     computed: {
-         filteredItems() {
+        filteredItems() {
             if (!this.data.items) return null;
             return this.data.items.filter(item => {
                 return (
@@ -76,20 +96,40 @@ export default {
             isSellerUpdateModalVisible: false,
             seller: {},
             componentKey: 0,
-            searchQuery: ''
+            searchQuery: '',
+            pageNo: PAGENERATION.PAGE_NO,
+            pageSize: PAGENERATION.PAGE_SIZE
         };
     },
     mounted() {
         this.fetchData();
     },
     methods: {
-        async fetchData() {
+        handleSelection(event) {
+            const selectedValue = event.target.value;
+            this.fetchData(this.pageNo, selectedValue);
+            this.pageSize = selectedValue;
+        },
+        async fetchData(pageNo, pageSize) {
+            pageNo = Number(pageNo)
+            console.log(pageSize)
+            if (isNaN(pageNo)) {
+                pageNo = this.pageNo
+            }
+            if (typeof pageSize === "undefined") {
+                pageSize = this.pageSize
+            }
             try {
-                let response = axios
-                    .get(`${API_BASE_URL}/${ENDPOINTS.SELLERS}`)
-                    .then((res) => (this.data = res.data))
-                let data = await response.json();
-                this.items = data;
+                let response = await axios
+                    .get(`${API_BASE_URL}/${ENDPOINTS.SELLERS}`, {
+                        params: {
+                            page_no: pageNo,
+                            page_size: pageSize,
+                        },
+                    });
+                let data = response.data;
+                this.data = data;
+                this.pageNo = pageNo;
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -114,7 +154,7 @@ export default {
             clearTimeout(this.debounceTimeout);
             this.debounceTimeout = setTimeout(() => {
                 this.searchQuery = value;
-            }, 300); // ปรับ delay ตามที่ต้องการ
+            }, 300);
         },
     }
 }
@@ -176,6 +216,48 @@ tbody button {
 tbody button:hover {
     background-color: yellow;
     box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.4);
+}
+
+.footer-content {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+}
+
+.footer-content p {
+    display: flex;
+    align-items: center;
+}
+
+.footer-content,
+p,
+select {
+    margin-right: 10px;
+}
+
+.footer-content p {
+    height: 30px;
+}
+
+.footer-content select {
+    height: 30px;
+    border-radius: 3px;
+    border-style: none;
+    box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.3);
+    transition: box-shadow 0.3s ease;
+}
+
+.footer-content button {
+    margin-right: 5px;
+    height: 30px;
+    border-radius: 3px;
+    border-style: none;
+    box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.3);
+    transition: box-shadow 0.3s ease;
+}
+
+#footer-td {
+    padding: 0px;
 }
 
 #cal1 {
