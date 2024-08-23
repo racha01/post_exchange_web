@@ -34,6 +34,15 @@ a,
   }
 } */
 
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&display=swap');
+
+* {
+  font-family: "Noto Sans Thai", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-variation-settings:"wdth" 100;
+}
+
 .container {
   display: flex;
   height: 100vh;
@@ -75,7 +84,7 @@ a,
 }
 
 .sub-title-button button:hover {
-  background-color:  #00d61d;
+  background-color: #00d61d;
   box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.4);
   border-style: none;
 }
