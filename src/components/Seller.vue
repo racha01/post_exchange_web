@@ -3,14 +3,17 @@
         <h1>Seller</h1>
         <p>This is the Seller page.</p>
         <div class="sub-title">
+            <div class="sub-title-button">
+                <button @click="showSellerAddModal">เพิ่มข้อมูล</button>
+            </div>
             <div>
-                <button class="sub-title-button" @click="showSellerAddModal">เพิ่มข้อมูล</button>
                 <SellerAddModal :key="componentKey" id="input-add-form" v-show="isSellerAddModalVisible"
                     @close="closeModal" @data-updated="fetchData" />
             </div>
             <div>
-                <input class="sub-title-input" type="text" placeholder="Search">
-                <font-awesome-icon icon="search" />
+                <input @input="updateQuery($event.target.value)" class="sub-title-input" type="text"
+                    placeholder="Search">
+                <!-- <font-awesome-icon icon="search" /> -->
             </div>
         </div>
         <div>
@@ -24,7 +27,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(item, index) in data.items" :key="index">
+                    <tr v-for="(item, index) in filteredItems ?? data.items" :key="index">
                         <td>{{ index + 1 }}</td>
                         <td>{{ item.seller_code }}</td>
                         <td>{{ item.seller_name }}</td>
@@ -50,6 +53,17 @@ import { API_BASE_URL, ENDPOINTS } from './../../config';
 library.add(faSearch);
 import axios from 'axios';
 export default {
+    computed: {
+         filteredItems() {
+            if (!this.data.items) return null;
+            return this.data.items.filter(item => {
+                return (
+                    item.seller_code.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                    item.seller_name.toLowerCase().includes(this.searchQuery.toLowerCase())
+                );
+            });
+        }
+    },
     name: "seller",
     components: {
         SellerAddModal,
@@ -61,7 +75,8 @@ export default {
             isSellerAddModalVisible: false,
             isSellerUpdateModalVisible: false,
             seller: {},
-            componentKey: 0
+            componentKey: 0,
+            searchQuery: ''
         };
     },
     mounted() {
@@ -94,6 +109,12 @@ export default {
         closeModal() {
             this.isSellerAddModalVisible = false;
             this.isSellerUpdateModalVisible = false;
+        },
+        updateQuery(value) {
+            clearTimeout(this.debounceTimeout);
+            this.debounceTimeout = setTimeout(() => {
+                this.searchQuery = value;
+            }, 300); // ปรับ delay ตามที่ต้องการ
         },
     }
 }
@@ -140,6 +161,21 @@ tbody tr:last-of-type {
 tbody tr.active-row {
     font-weight: bold;
     color: #009879;
+}
+
+tbody button {
+    background: #e8e8e8;
+    border-radius: 5px;
+    border-width: 1px;
+    border-style: none;
+    padding: 5px 4px;
+    box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.3);
+    transition: box-shadow 0.3s ease;
+}
+
+tbody button:hover {
+    background-color: yellow;
+    box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.4);
 }
 
 #cal1 {

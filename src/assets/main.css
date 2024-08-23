@@ -62,39 +62,22 @@ a,
   margin-bottom: 5px;
 }
 
-.sub-title-button {
-  padding: 10px 15px;
-  border: unset;
-  border-radius: 5px;
-  color: #212121;
-  background: #e8e8e8;
-  position: relative;
+.sub-title-button button {
   font-weight: 500;
   font-size: 15px;
-  -webkit-box-shadow: 1px 2px 4px -1px rgba(0, 0, 0, 0.27);
-  box-shadow: 1px 2px 4px -1px rgba(0, 0, 0, 0.27);
-  transition: all 250ms;
-  overflow: hidden;
-}
-
-.sub-title-button button::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 0;
+  background: #e8e8e8;
   border-radius: 5px;
-  background-color: #646cfd;
-  transition: all 250ms
+  border-width: 1px;
+  border-style: none;
+  padding: 10px 15px;
+  box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.3);
+  transition: box-shadow 0.3s ease;
 }
 
 .sub-title-button button:hover {
-  color: #e8e8e8;
-}
-
-.sub-title-button button:hover::before {
-  width: 100%;
+  background-color:  #00d61d;
+  box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.4);
+  border-style: none;
 }
 
 .sub-title-input {
