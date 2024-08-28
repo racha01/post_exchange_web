@@ -2,7 +2,8 @@ export const API_BASE_URL = 'https://localhost:7287/api';
 
 export const ENDPOINTS = {
   SELLERS: 'sellers',
-  PRODUCTS: 'products'
+  PRODUCTS: 'products',
+  DELIVER_GOODS: 'deliver-goods'
 };
 
 export const PAGENERATION = {

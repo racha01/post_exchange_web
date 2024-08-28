@@ -1,7 +1,6 @@
 <template>
     <div class="content">
-        <h1>Product</h1>
-        <p>This is the Product page.</p>
+        <h1>สินค้าของผู้ฝากขาย</h1>
         <div class="sub-title">
             <div class="sub-title-button">
                 <button @click="showProductAddModal">เพิ่มข้อมูล</button>
