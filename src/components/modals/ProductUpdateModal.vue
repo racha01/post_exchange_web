@@ -32,7 +32,7 @@
                     <label>ราคาขายสด</label>
                     <input v-model="cashPrice" type="number" min="0" :placeholder="product.cash_price">
                 </div>
-                <div>
+                <div class="item">
                     <label>ราคาเซ็น</label>
                     <input v-model="accrualsPrice" type="number" min="0" :placeholder="product.accruals_price">
                 </div>
@@ -40,7 +40,7 @@
 
             <footer class="modal-footer">
                 <button type="button" class="btn-green" @click="updateData">
-                    เพิ่มข้อมูล
+                    แก้ไขข้อมูล
                 </button>
                 <button type="button" class="btn-gray" @click="close">
                     ยกเลิก

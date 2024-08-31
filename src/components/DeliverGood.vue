@@ -1,13 +1,13 @@
 <template>
     <div class="content">
-        <h1>DeliverGood</h1>
+        <h1>รายการส่งสินค้า</h1>
         <div class="sub-title">
             <div class="sub-title-button">
                 <button @click="showDeliverGoodAddModal">เพิ่มข้อมูล</button>
             </div>
             <div>
-                <DeliverGoodAddModal :key="componentKey" id="input-add-form"
-                    v-show="isDeliverGoodAddModalVisible" @close="closeModal" @data-updated="fetchData" />
+                <DeliverGoodAddModal :key="componentKey" id="input-add-form" v-show="isDeliverGoodAddModalVisible"
+                    @close="closeModal" @data-updated="fetchData" :products="productData" />
             </div>
             <div>
                 <input @input="updateQuery($event.target.value)" class="sub-title-input" type="text"
@@ -41,9 +41,9 @@
                     <td>{{ item.amount }}</td>
                     <td>{{ item.leftovers }}</td>
                     <td>
-                        <!-- <button @click="showProductUpdateModal(item)">แก้ไขข้อมูล</button>
-                        <ProductUpdateModal :key="componentKey" :product="productDoc" :sellers="sellerData.items"
-                            @product-update="fetchData" v-show="isProductUpdateModalVisible" @close="closeModal" /> -->
+                        <button @click="showDeliverGoodUpdateModal(item)">แก้ไขข้อมูล</button>
+                        <DeliverGoodUpdateModal :key="componentKey" :deliverGood="deliverGoodDoc" :products="productData" @deliver-good-update="fetchData"
+                            v-show="isDeliverGoodUpdateModalVisible" @close="closeModal" />
                     </td>
                 </tr>
             </tbody>
@@ -74,8 +74,9 @@
 import { API_BASE_URL, ENDPOINTS, PAGENERATION } from './../../config';
 import axios from 'axios';
 import DeliverGoodAddModal from './modals/DeliverGoodAddModal.vue'
-const months = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", 
-               "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+import DeliverGoodUpdateModal from './modals/DeliverGoodUpdateModal.vue'
+const months = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.",
+    "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
 export default {
     name: "DeliverGood",
     mounted() {
@@ -83,6 +84,24 @@ export default {
     },
     components: {
         DeliverGoodAddModal,
+        DeliverGoodUpdateModal
+    },
+    computed: {
+        filteredItems() {
+            if (!this.deliverGoodData.items) return null;
+            return this.deliverGoodData.items.filter(item => {
+                return (
+                    item.seller_name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                    item.product_name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                    item.wholesale_price.toString().toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                    item.cash_price.toString().toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                    item.accruals_price.toString().toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                    item.amount.toString().toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                    item.leftovers.toString().toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                    item.deliver_good_date.toString().toLowerCase().includes(this.searchQuery.toLowerCase())
+                );
+            });
+        }
     },
     data() {
         return {
@@ -94,7 +113,8 @@ export default {
             searchQuery: '',
             pageNo: PAGENERATION.PAGE_NO,
             pageSize: PAGENERATION.PAGE_SIZE,
-            productData: []
+            productData: [],
+            deliverGoodDoc: {}
         };
     },
     methods: {
@@ -121,27 +141,54 @@ export default {
                 console.error('Error fetching data:', error);
             }
         },
-        toDateThai(dateTime){
+        toDateThai(dateTime) {
             const date = new Date(dateTime);
-            const day = date.getUTCDate();
-            const month = date.getUTCMonth(); 
-            const year = (date.getUTCFullYear() + 543).toString().slice(-2); 
+            const day = date.getUTCDate() ;
+            const month = date.getUTCMonth();
+            const year = (date.getUTCFullYear() + 543).toString().slice(-2);
             return `${day}-${months[month]}-${year}`
         },
         async showDeliverGoodAddModal() {
             this.isDeliverGoodAddModalVisible = true;
 
+            await axios
+                .get(`${API_BASE_URL}/${ENDPOINTS.PRODUCTS}`)
+                .then((res) => (this.productData = res.data.items))
+
+            this.$emit('products', this.productData);
+
+            this.componentKey += 1;
+        },
+        async showDeliverGoodUpdateModal(item) {
+            this.isDeliverGoodUpdateModalVisible = true;
+            let productResponse = await axios
+                .get(`${API_BASE_URL}/${ENDPOINTS.DELIVER_GOODS}/${item.id}`)
+
+            let productData = productResponse.data;
+            this.deliverGoodDoc = productData;
+            this.$emit('deliverGood', this.deliverGoodDoc);
+            this.componentKey += 1;
+
+            await axios
+                .get(`${API_BASE_URL}/${ENDPOINTS.PRODUCTS}`)
+                .then((res) => (this.productData = res.data.items))
+
+            this.$emit('products', this.productData);
             // await axios
             //     .get(`${API_BASE_URL}/${ENDPOINTS.SELLERS}`)
             //     .then((res) => (this.sellerData = res.data))
 
-            // this.$emit('products', this.sellerData.items);
-
-            this.componentKey += 1;
+            // this.$emit('sellers', this.sellerData.items);
         },
         closeModal() {
             this.isDeliverGoodAddModalVisible = false;
             this.isDeliverGoodUpdateModalVisible = false;
+        },
+        updateQuery(value) {
+            clearTimeout(this.debounceTimeout);
+            this.debounceTimeout = setTimeout(() => {
+                this.searchQuery = value;
+            }, 300);
         },
     }
 }

@@ -2,7 +2,7 @@
     <div class="modal-backdrop">
         <div class="modal">
             <header class="modal-header">
-                <p> เพิ่มข้อมูลการส่งสินค้า</p>
+                <p>แก้ไขข้อมูลการส่งสินค้า</p>
             </header>
             <section class="modal-body">
                 <div class="item">
@@ -12,6 +12,7 @@
                 <div class="item">
                     <label for="product">ชื่อผู้สินค้า</label>
                     <select v-model="productId" @change="handleSelect(products)">
+                        <option value="" hidden="true" disabled selected>{{ deliverGood.seller_name }}</option>
                         <option v-for="product in products" :key="product" :value="product.id">
                             {{ `${product.product_name} (${product.seller_name})` }}
                         </option>
@@ -23,29 +24,29 @@
                 </div>
                 <div class="item">
                     <label>ราคาส่ง</label>
-                    <input v-model="wholesalePrice" type="number" min="0">
+                    <input v-model="wholesalePrice" type="number" min="0" :placeholder="deliverGood.wholesale_price">
                 </div>
                 <div class="item">
                     <label>ราคาขายสด</label>
-                    <input v-model="cashPrice" type="number" min="0">
+                    <input v-model="cashPrice" type="number" min="0" :placeholder="deliverGood.cash_price">
                 </div>
                 <div class="item">
                     <label>ราคาเซ็น</label>
-                    <input v-model="accrualsPrice" type="number" min="0">
+                    <input v-model="accrualsPrice" type="number" min="0" :placeholder="deliverGood.accruals_price">
                 </div>
                 <div class="item">
                     <label>จำนวน</label>
-                    <input v-model="amount" type="number" min="0">
+                    <input v-model="amount" type="number" min="0" :placeholder="deliverGood.amount">
                 </div>
                 <div class="item">
                     <label>จำหน่าย</label>
-                    <input v-model="leftovers" type="number" min="0">
+                    <input v-model="leftovers" type="number" min="0" :placeholder="deliverGood.leftovers">
                 </div>
             </section>
 
             <footer class="modal-footer">
-                <button type="button" class="btn-green" @click="addData">
-                    เพิ่มข้อมูล
+                <button type="button" class="btn-green" @click="updateData">
+                    แก้ไขข้อมูล
                 </button>
                 <button type="button" class="btn-gray" @click="close">
                     ยกเลิก
@@ -59,69 +60,74 @@
 import axios from 'axios';
 import { API_BASE_URL, ENDPOINTS } from './../../../config';
 export default {
-    name: "DeliverGoodAddModal",
+    name: "DeliverGoodUpdateModal",
     data() {
         return {
             isDropdownVisible: true,
-            selectedValue: '',
-            sellerName: '',
-            wholesalePrice: null,
-            cashPrice: null,
-            accrualsPrice: null,
-            leftovers: 0,
+            isVisible: false,
+            sellerName: this.deliverGood.seller_name,
+            productId: '',
         }
     },
     props: {
+        deliverGood: {
+            id: String,
+            seller_code: String,
+            seller_name: String,
+            ProductId: String,
+            product_code: String,
+            product_name: String,
+            wholesale_price: String,
+            cash_price: String,
+            accruals_price: String,
+            amount: String,
+            leftovers: String,
+            deliver_good_date: String
+        },
         products: []
     },
+    mounted() {
+        this.setDataPicker();
+    },
     methods: {
-        async addData() {
-            const res = await axios.post(`${API_BASE_URL}/${ENDPOINTS.DELIVER_GOODS}`,
+        async updateData() {
+            console.log(this.productId)
+            const res = await axios.put(`${API_BASE_URL}/${ENDPOINTS.DELIVER_GOODS}/${this.deliverGood.id}`,
                 {
-                    product_id: `${this.productId}`,
-                    wholesale_price: `${this.wholesalePrice}`,
-                    cash_price: `${this.cashPrice}`,
-                    accruals_price: `${this.accrualsPrice}`,
-                    amount: `${this.amount}`,
-                    leftovers: `${this.leftovers}`,
-                    deliver_good_date: `${this.deliverGoodDate}`
+                    product_id: `${!this.productId ? this.deliverGood.product_id : this.productId}`,
+                    wholesale_price: `${this.wholesalePrice ?? this.deliverGood.wholesale_price}`,
+                    cash_price: `${this.cashPrice ?? this.deliverGood.cash_price}`,
+                    accruals_price: `${this.accrualsPrice ?? this.deliverGood.accruals_price}`,
+                    amount: `${this.amount ?? this.deliverGood.amount}`,
+                    leftovers: `${this.leftovers ?? this.deliverGood.leftovers}`,
+                    deliver_good_date: `${!this.deliverGoodDate ? this.deliverGood.deliver_good_date:  this.deliverGoodDate}`
                 });
             res.data.json;
-
+            this.$emit('deliver-good-update', res.data.json);
             this.$emit('close');
-            this.$emit('data-updated');
         },
-        async close() {
+        close() {
             this.$emit('close');
-            const res = await axios.post(`${API_BASE_URL}/${ENDPOINTS.DELIVER_GOODS}`,
-                {
-                    seller_id: `${this.sellerId}`,
-                    product_code: `${this.productCode}`,
-                    product_name: `${this.productName}`,
-                    wholesale_price: `${this.wholesalePrice}`,
-                    cash_price: `${this.cashPrice}`,
-                    accruals_price: `${this.accrualsPrice}`,
-                });
-            res.data.json;
-
-            this.$emit('close');
-            this.$emit('data-updated');
-        },
-        updateToUppercase(event) {
-            event.target.value = event.target.value.toUpperCase();
         },
         handleSelect(products) {
             this.sellerName = products.find(x => x.id === event.target.value)?.seller_name
-            this.wholesalePrice = products.find(x => x.id === event.target.value)?.wholesale_price
-            this.cashPrice = products.find(x => x.id === event.target.value)?.cash_price
-            this.accrualsPrice = products.find(x => x.id === event.target.value)?.accruals_price
+        },
+        updateToUppercase(event) {
+            event.target.value = event.target.value.toUpperCase();
         },
         formatISODate() {
             const selectedDate = new Date(this.deliverGoodDate);
             selectedDate.setUTCHours(17, 0, 0, 0);
             this.deliverGoodDate = selectedDate.toISOString();
         },
-    }
+        setDataPicker() {
+            const date = new Date(this.deliverGood.deliver_good_date);
+            const yyyy = date.getUTCFullYear();
+            const mm = String(date.getUTCMonth() + 1).padStart(2, '0');
+            const dd = String(date.getUTCDate()).padStart(2, '0');
+            this.deliverGoodDate = `${yyyy}-${mm}-${dd}`;
+        }
+    }, 
 }
 </script>
 

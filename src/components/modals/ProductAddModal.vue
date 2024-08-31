@@ -42,7 +42,7 @@
                     <label>ราคาขายสด</label>
                     <input v-model="cashPrice" type="number" min="0">
                 </div>
-                <div>
+                <div class="item">
                     <label>ราคาเซ็น</label>
                     <input v-model="accrualsPrice" type="number" min="0">
                 </div>
