@@ -10,7 +10,7 @@
                     <input v-model="deliverGoodDate" type="date" @change="formatISODate">
                 </div>
                 <div class="item">
-                    <label for="product">ชื่อผู้สินค้า</label>
+                    <label for="product">ชื่อสินค้า</label>
                     <select v-model="productId" @change="handleSelect(products)">
                         <option v-for="product in products" :key="product" :value="product.id">
                             {{ `${product.product_name} (${product.seller_name})` }}
