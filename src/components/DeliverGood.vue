@@ -42,7 +42,8 @@
                     <td>{{ item.leftovers }}</td>
                     <td>
                         <button @click="showDeliverGoodUpdateModal(item)">แก้ไขข้อมูล</button>
-                        <DeliverGoodUpdateModal :key="componentKey" :deliverGood="deliverGoodDoc" :products="productData" @deliver-good-update="fetchData"
+                        <DeliverGoodUpdateModal :key="componentKey" :deliverGood="deliverGoodDoc"
+                            :products="productData" @deliver-good-update="fetchData"
                             v-show="isDeliverGoodUpdateModalVisible" @close="closeModal" />
                     </td>
                 </tr>
@@ -59,10 +60,10 @@
                                 <option>100</option>
                             </select>
                             <button @click="fetchData((pageNo - 1), pageSize)"
-                                :disabled="productData.has_previous_page == false">
+                                :disabled="deliverGoodData.has_previous_page == false">
                                 < </button>
                                     <button @click="fetchData((pageNo + 1), pageSize)"
-                                        :disabled="productData.has_next_page == false"> > </button>
+                                        :disabled="deliverGoodData.has_next_page == false">></button>
                         </div>
                     </td>
                 </tr>
@@ -143,7 +144,7 @@ export default {
         },
         toDateThai(dateTime) {
             const date = new Date(dateTime);
-            const day = date.getUTCDate() ;
+            const day = date.getUTCDate();
             const month = date.getUTCMonth();
             const year = (date.getUTCFullYear() + 543).toString().slice(-2);
             return `${day}-${months[month]}-${year}`

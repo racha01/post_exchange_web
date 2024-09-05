@@ -6,8 +6,8 @@
                 <button @click="showProductAddModal">เพิ่มข้อมูล</button>
             </div>
             <div>
-                <ProductAddModal :sellers="sellerData.items" :key="componentKey" id="input-add-form" v-show="isProductAddModalVisible"
-                    @close="closeModal" @data-updated="fetchData" />
+                <ProductAddModal :sellers="sellerData.items" :key="componentKey" id="input-add-form"
+                    v-show="isProductAddModalVisible" @close="closeModal" @data-updated="fetchData" />
             </div>
             <div>
                 <input @input="updateQuery($event.target.value)" class="sub-title-input" type="text"
@@ -41,8 +41,8 @@
                     <td>{{ item.accruals_price }}</td>
                     <td>
                         <button @click="showProductUpdateModal(item)">แก้ไขข้อมูล</button>
-                        <ProductUpdateModal :key="componentKey" :product="productDoc" :sellers="sellerData.items" @product-update="fetchData"
-                            v-show="isProductUpdateModalVisible" @close="closeModal" />
+                        <ProductUpdateModal :key="componentKey" :product="productDoc" :sellers="sellerData.items"
+                            @product-update="fetchData" v-show="isProductUpdateModalVisible" @close="closeModal" />
                     </td>
                 </tr>
             </tbody>
@@ -61,7 +61,7 @@
                                 :disabled="productData.has_previous_page == false">
                                 < </button>
                                     <button @click="fetchData((pageNo + 1), pageSize)"
-                                        :disabled="productData.has_next_page == false"> > </button>
+                                        :disabled="productData.has_next_page == false">></button> 
                         </div>
                     </td>
                 </tr>
@@ -88,7 +88,7 @@ export default {
                     item.product_name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
                     item.wholesale_price.toString().toLowerCase().includes(this.searchQuery.toLowerCase()) ||
                     item.cash_price.toString().toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-                    item.accruals_price.toString().toLowerCase().includes(this.searchQuery.toLowerCase()) 
+                    item.accruals_price.toString().toLowerCase().includes(this.searchQuery.toLowerCase())
                 );
             });
         }

@@ -91,7 +91,6 @@ export default {
     },
     methods: {
         async updateData() {
-            console.log(this.productId)
             const res = await axios.put(`${API_BASE_URL}/${ENDPOINTS.DELIVER_GOODS}/${this.deliverGood.id}`,
                 {
                     product_id: `${!this.productId ? this.deliverGood.product_id : this.productId}`,

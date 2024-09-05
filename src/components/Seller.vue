@@ -52,7 +52,7 @@
                                     :disabled="data.has_previous_page == false">
                                     < </button>
                                         <button @click="fetchData((pageNo + 1), pageSize)"
-                                            :disabled="data.has_next_page == false"> > </button>
+                                            :disabled="data.has_next_page == false">></button>
                             </div>
                         </td>
                     </tr>

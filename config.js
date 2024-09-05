@@ -4,7 +4,8 @@ export const ENDPOINTS = {
   SELLERS: 'sellers',
   PRODUCTS: 'products',
   DELIVER_GOODS: 'deliver-goods',
-  POST_EXCHANGE_PRODUCTS: 'post-exchange-products'
+  POST_EXCHANGE_PRODUCTS: 'post-exchange-products',
+  POST_EXCHANGE_STOCKS: 'post-exchange-stocks'
 };
 
 export const PAGENERATION = {

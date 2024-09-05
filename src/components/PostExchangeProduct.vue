@@ -54,7 +54,7 @@
                                     :disabled="postExchangeProductData.has_previous_page == false">
                                     < </button>
                                         <button @click="fetchData((pageNo + 1), pageSize)"
-                                            :disabled="postExchangeProductData.has_next_page == false"> > </button>
+                                            :disabled="postExchangeProductData.has_next_page == false">></button>
                             </div>
                         </td>
                     </tr>
