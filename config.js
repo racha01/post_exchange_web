@@ -4,6 +4,7 @@ export const ENDPOINTS = {
   SELLERS: 'sellers',
   PRODUCTS: 'products',
   DELIVER_GOODS: 'deliver-goods',
+  DELIVER_GOODS_CUTOFF: 'deliver-goods/cut-off',
   POST_EXCHANGE_PRODUCTS: 'post-exchange-products',
   POST_EXCHANGE_STOCKS: 'post-exchange-stocks'
 };

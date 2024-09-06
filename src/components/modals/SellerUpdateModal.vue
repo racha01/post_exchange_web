@@ -15,7 +15,6 @@
                     <input ref="sellerName" v-model="sellerName" type="text" :placeholder="seller.seller_name"
                         @focus="clearInput">
                 </div>
-
             </section>
 
             <footer class="modal-footer">

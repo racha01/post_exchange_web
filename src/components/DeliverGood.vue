@@ -81,6 +81,9 @@ const months = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค."
 export default {
     name: "DeliverGood",
     mounted() {
+        if (!!this.$route.query.seller_id){
+            this.sellerId = this.$route.query.seller_id;
+        }
         this.fetchData();
     },
     components: {
@@ -115,7 +118,8 @@ export default {
             pageNo: PAGENERATION.PAGE_NO,
             pageSize: PAGENERATION.PAGE_SIZE,
             productData: [],
-            deliverGoodDoc: {}
+            deliverGoodDoc: {},
+            sellerId: null
         };
     },
     methods: {
@@ -131,6 +135,7 @@ export default {
                 let response = await axios
                     .get(`${API_BASE_URL}/${ENDPOINTS.DELIVER_GOODS}`, {
                         params: {
+                            seller_id: this.sellerId,
                             page_no: pageNo,
                             page_size: pageSize,
                         },
@@ -175,11 +180,6 @@ export default {
                 .then((res) => (this.productData = res.data.items))
 
             this.$emit('products', this.productData);
-            // await axios
-            //     .get(`${API_BASE_URL}/${ENDPOINTS.SELLERS}`)
-            //     .then((res) => (this.sellerData = res.data))
-
-            // this.$emit('sellers', this.sellerData.items);
         },
         closeModal() {
             this.isDeliverGoodAddModalVisible = false;
@@ -190,6 +190,11 @@ export default {
             this.debounceTimeout = setTimeout(() => {
                 this.searchQuery = value;
             }, 300);
+        },
+        handleSelection(event) {
+            const selectedValue = event.target.value;
+            this.fetchData(this.pageNo, selectedValue);
+            this.pageSize = selectedValue;
         },
     }
 }

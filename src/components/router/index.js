@@ -39,6 +39,11 @@ const router = createRouter({
         path: '/post-exchange-stock/detail',
         name: 'postExchangeStockDetail',
         component: () => import('@/components/PostExchangeStockDetail.vue')
+      },
+      {
+        path: '/deliver-good/cut-off',
+        name: 'deliverGoodCutoff',
+        component: () => import('@/components/DeliverGoodsCutoff.vue')
       }
       
     ]
