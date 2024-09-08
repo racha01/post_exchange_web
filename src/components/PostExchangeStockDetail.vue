@@ -44,9 +44,8 @@
                         <td>{{ item.qty_per_unit }}</td>
                         <td>{{ item.cash_price }}</td>
                         <td>{{ item.accruals_price }}</td>
-                        <td v-if="item.is_sell_post_exchange">{{ (item.cash_price * item.unit_qty * item.qty_per_unit) -
-                            item.total_price }} - {{
-                                (item.accruals_price * item.unit_qty * item.qty_per_unit) - item.total_price }}</td>
+                        <td v-if="item.is_sell_post_exchange">{{ item.net_profit_cash_price }} - {{
+                                item.net_profit_accruals_price }}</td>
                         <td v-else></td>
                         <td>
                             <button @click="showPostExchangeStockDetailUpdateModal(item)">แก้ไขข้อมูล</button>
