@@ -44,6 +44,11 @@ const router = createRouter({
         path: '/deliver-good/cut-off',
         name: 'deliverGoodCutoff',
         component: () => import('@/components/DeliverGoodsCutoff.vue')
+      },
+      {
+        path: '/deliver-good/cut-off-detail',
+        name: 'deliverGoodCutoffDetail',
+        component: () => import('@/components/DeliverGoodsCutoffDetail.vue')
       }
       
     ]

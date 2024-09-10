@@ -7,15 +7,17 @@
             <section class="modal-body">
                 <div class="item">
                     <label for="postExchangeProduct">ชื่อสินค้า</label>
-                    <select v-model="productId" @change="handleSelect(postExchangeProducts)">
-                        <option value="" hidden="true" disabled v-show="false">{{
-                            `${postExchangeStockStockDetail.product_name}(${postExchangeStockStockDetail.barcode_number})`
-                            }}</option>
-                        <option v-for="postExchangeProduct in postExchangeProducts" :key="postExchangeProduct"
-                            :value="postExchangeProduct.id">
-                            {{ `${postExchangeProduct.product_name}\n(${postExchangeProduct.barcode_number})` }}
-                        </option>
-                    </select>
+                    <v-select v-model="product" item-value="id" class="select-height" :filter="fuseSearch"
+                        :options="productSelects" :get-option-label="(option) => option.product_name">
+                        <template #option="{ product_name, barcode_number }">
+                            {{ product_name }}
+                            <br />
+                            <cite>{{ barcode_number }}</cite>
+                        </template>
+                        <template #no-options="{}">
+                            ไม่มีรายการสินค้า
+                        </template>
+                    </v-select>
                 </div>
                 <div class="item">
                     <label>จำนวน</label>
@@ -69,7 +71,9 @@ export default {
             isSellPostExchange: this.postExchangeStockStockDetail.is_sell_post_exchange,
             productName: '',
             barcodeNumber: '',
-            productId: ''
+            productId: '',
+            product: this.postExchangeStockStockDetail,
+            productSelects: this.postExchangeProducts
         }
     },
     props: {
@@ -116,11 +120,11 @@ export default {
             console.log('gg')
             const productUpdate = {
                 id: this.postExchangeStockStockDetail.id,
-                product_name: !this.productName ? this.postExchangeStockStockDetail.product_name : this.productName,
-                barcode_number: !this.barcodeNumber ? this.postExchangeStockStockDetail.barcode_number : this.barcodeNumber,
+                product_name: !this.productName ? this.product.product_name : this.productName,
+                barcode_number: !this.barcodeNumber ? this.product.barcode_number : this.barcodeNumber,
                 unit_qty: !this.unitQty ? this.postExchangeStockStockDetail.unit_qty : this.unitQty,
                 unit_price: !this.unitPrice ? this.postExchangeStockStockDetail.unit_price : this.unitPrice,
-                total_price: (!this.unitQty ? this.postExchangeStockStockDetail.unit_qty : this.unitQty * !this.unitPrice ? this.postExchangeStockStockDetail.unit_price : this.unitPrice),
+                total_price: (!this.unitQty ? this.postExchangeStockStockDetail.unit_qty : this.unitQty * !this.unitPrice ? this.product.unit_price : this.unitPrice),
                 cash_price: !this.cashPrice ? this.postExchangeStockStockDetail.cash_price : this.cashPrice,
                 accruals_price: !this.accrualsPrice ? this.postExchangeStockStockDetail.accruals_price : this.accrualsPrice,
                 qty_per_unit: !this.qtyPerUnit ? this.postExchangeStockStockDetail.qty_per_unit : this.qtyPerUnit,
@@ -317,5 +321,12 @@ select {
     padding: 10px;
     border-radius: 5px;
     font-size: 16px;
+}
+
+.select-height>>>.vs__dropdown-toggle {
+    height: 50px !important;
+    margin-bottom: -10px;
+    text-align: start;
+
 }
 </style>

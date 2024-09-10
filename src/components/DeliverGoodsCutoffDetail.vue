@@ -1,12 +1,12 @@
 <template>
     <div class="content">
-        <h1>รายการส่งสินค้า</h1>
+        <h1>รายการส่งสินค้าของ{{ sellerName }}</h1>
         <div class="sub-title">
             <div class="sub-title-data">
                 <div class="sub-title-button">
                     <button @click="showDeliverGoodAddModal">เพิ่มข้อมูล</button>
                 </div>
-                <div style="margin-left: 5px;">
+                <div style="opacity: 0.8">
                     <VueDatePicker @input="onDateSelected" v-model="date" :range="{ partialRange: false }" />
                 </div>
             </div>
@@ -17,7 +17,7 @@
             </div>
             <div>
                 <input @input="updateQuery($event.target.value)" class="sub-title-input" type="text"
-                    placeholder="Search">
+                    placeholder="Searfont-size: 16px;ch">
             </div>
         </div>
         <table>
@@ -88,12 +88,12 @@ import '@vuepic/vue-datepicker/dist/main.css'
 const months = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.",
     "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
 export default {
-    name: "DeliverGood",
+    name: "DeliverGoodCutoffDetail",
     mounted() {
         if (!!this.$route.query.seller_id) {
             this.sellerId = this.$route.query.seller_id;
         }
-        this.setDatePicker();
+        this.date = JSON.parse(this.$route.query.date);
         this.fetchData();
     },
     components: {
@@ -129,9 +129,9 @@ export default {
             pageNo: PAGENERATION.PAGE_NO,
             pageSize: PAGENERATION.PAGE_SIZE,
             productData: [],
-            deliverGoodDoc: {},
             sellerId: null,
-            date: []
+            date: [],
+            sellerName: '',
         };
     },
     methods: {
@@ -156,6 +156,7 @@ export default {
                     });
                 let data = response.data;
                 this.deliverGoodData = data;
+                this.sellerName = data.items[0].seller_name
                 this.pageNo = pageNo;
             } catch (error) {
                 console.error('Error fetching data:', error);

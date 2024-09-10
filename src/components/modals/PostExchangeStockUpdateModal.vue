@@ -110,12 +110,12 @@ export default {
             this.invoiceDate = `${yyyy}-${mm}-${dd}`;
         },
         async updateData() {
-            const res = await axios.put(`${API_BASE_URL}/${ENDPOINTS.POST_EXCHANGE_STOCKS}/${this.postExchangeStock.id}`,
+            const res = await axios.put(`${API_BASE_URL}/${ENDPOINTS.POST_EXCHANGE_STOCKS}/${this.postExchangeStock._id}`,
                 {
-                    monthly: `${!this.monthly ? this.this.postExchangeStock.monthly : this.monthly}`,
+                    monthly: `${!this.monthly ? this.postExchangeStock.monthly : this.monthly}`,
                     product_post_exchanges: [...this.postExchangeStock.product_post_exchanges],
                     excluded_product_post_exchanges: [...this.postExchangeStock.excluded_product_post_exchanges],
-                    invoice_date: `${!this.cost ? this.postExchangeStock.invoice_date : this.invoice_date}`,
+                    invoice_date: `${!this.invoice_date ? this.postExchangeStock.invoice_date : this.invoice_date}`,
                     cost: `${!this.cost ? this.postExchangeStock.cost : this.cost}`
                 });
             this.$emit('data-update', res.data.json);

@@ -21,6 +21,8 @@
                         <th id="cal1">ลำดับ</th>
                         <th>ชื่อสินค้า</th>
                         <th>บาร์โค้ด</th>
+                        <th>ราคาขายสด/ชิ้น</th>
+                        <th>ราคาขายเซ็น/ชิ้น</th>
                         <th>ประเภท</th>
                         <th>ตัวเลือก</th>
                     </tr>
@@ -28,8 +30,10 @@
                 <tbody>
                     <tr v-for="(item, index) in filteredItems ?? postExchangeProductData.items" :key="index">
                         <td>{{ index + 1 }}</td>
-                        <td>{{ item.product_name }}</td>
+                        <td style="text-align: start;">{{ item.product_name }}</td>
                         <td>{{ item.barcode_number }}</td>
+                        <td>{{ item.cash_price}}</td>
+                        <td>{{ item.accruals_price }}</td>
                         <td>{{ item.type }}</td>
                         <td>
                             <button @click="showPostExchangeProductUpdateModal(item)">แก้ไขข้อมูล</button>
@@ -41,7 +45,7 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="5" id="footer-td">
+                        <td colspan="7" id="footer-td">
                             <div class="footer-content">
                                 <p>จำนวนแถวต่อหน้า</p>
                                 <select @change="handleSelection($event)">

@@ -5,7 +5,7 @@
         <div class="sub-title">
             <div class="sub-title-button">
                 <button @click="showPostExchangeStockDetailAddModal">เพิ่มข้อมูล</button>
-                <button style="margin-left: 5px;" @click="dataConfirm">ยืนยันข้อมูล</button>
+                <button v-if="postExchangeStockDetailData.length" style="margin-left: 5px;" @click="dataConfirm">ยืนยันข้อมูล</button>
             </div>
             <div>
                 <PostExchangeStockDetailAddModal :key="componentKey" id="input-add-form"
@@ -44,8 +44,8 @@
                         <td>{{ item.qty_per_unit }}</td>
                         <td>{{ item.cash_price }}</td>
                         <td>{{ item.accruals_price }}</td>
-                        <td v-if="item.is_sell_post_exchange">{{ item.net_profit_cash_price }} - {{
-                                item.net_profit_accruals_price }}</td>
+                        <td v-if="item.is_sell_post_exchange">{{ (item.unit_qty * item.accruals_price * item.qty_per_unit) - item.total_price}} - {{
+                                (item.unit_qty * item.accruals_price * item.qty_per_unit) - item.total_price }}</td>
                         <td v-else></td>
                         <td>
                             <button @click="showPostExchangeStockDetailUpdateModal(item)">แก้ไขข้อมูล</button>
@@ -183,7 +183,6 @@ export default {
         },
         async showPostExchangeStockDetailUpdateModal(item) {
             this.isPostExchangeStockDetailUpdateModalVisible = true;
-            console.log(item)
             await axios
                 .get(`${API_BASE_URL}/${ENDPOINTS.POST_EXCHANGE_PRODUCTS}`)
                 .then((res) => (this.postExchangeProductData = res.data.items))

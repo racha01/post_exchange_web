@@ -6,15 +6,23 @@
             </header>
 
             <section class="modal-body">
-                <div>
+                <div class="first-item">
                     <label>ชื่อสินค้า</label>
                     <input v-model="productName" type="text" :placeholder="postExchangeProdcut.product_name">
                 </div>
-                <div>
+                <div class="item">
                     <label>เลขบาร์โค้ด</label>
                     <input v-model="barcodeNumber" type="text" :placeholder="postExchangeProdcut.barcode_number">
                 </div>
                 <div>
+                    <label>ราคาสด</label>
+                    <input v-model="cashPrice" type="number" :placeholder="postExchangeProdcut.cash_price">
+                </div>
+                <div  class="item">
+                    <label>ราคาเซ็น</label>
+                    <input v-model="accrulsPrice" type="number" :placeholder="postExchangeProdcut.accruals_price">
+                </div>
+                <div  class="item">
                     <label>ประเภท</label>
                     <select v-model="type">
                         <option value="" disabled v-show="isVisible">{{ postExchangeProdcut.type }}</option>
@@ -53,6 +61,8 @@ export default {
             id: String,
             product_name: String,
             barcode_number: String,
+            cash_price: Number,
+            accruals_price: Number,
             type: String
         }
     },
@@ -61,6 +71,8 @@ export default {
             const res = await axios.put(`${API_BASE_URL}/${ENDPOINTS.POST_EXCHANGE_PRODUCTS}/${this.postExchangeProdcut.id}`, {
                 product_name: `${this.productName ?? this.postExchangeProdcut.product_name}`,
                 barcode_number: `${this.barcodeNumber ?? this.postExchangeProdcut.barcode_number}`,
+                cash_price: `${this.cashPrice ?? this.postExchangeProdcut.cash_price}`,
+                accruals_price: `${this.accrualsPrice ?? this.postExchangeProdcut.accruals_price}`,
                 type: `${!this.type ? this.postExchangeProdcut.type : this.type}`
             });
 
@@ -129,8 +141,11 @@ export default {
 
 .modal-body {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     padding: 20px 10px;
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 500px;
 }
 
 .modal-body div {
@@ -194,5 +209,14 @@ select {
     padding: 10px;
     border-radius: 5px;
     font-size: 16px;
+}
+
+.item {
+    padding: 0px;
+    flex: 1 1 200px;
+}
+.first-item {
+    padding: 0px;
+    flex: 1 1 300px;
 }
 </style>

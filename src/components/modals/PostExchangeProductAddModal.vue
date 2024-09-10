@@ -6,15 +6,23 @@
             </header>
 
             <section class="modal-body">
-                <div>
+                <div class="first-item">
                     <label>ชื่อสินค้า</label>
                     <input v-model="productName" type="text">
                 </div>
-                <div>
+                <div class="item">
                     <label>เลขบาร์โค้ด</label>
                     <input v-model="barcodeNumber" type="text">
                 </div>
-                <div>
+                <div class="item">
+                    <label>ราคาสด</label>
+                    <input v-model="cashPrice" type="number">
+                </div>
+                <div class="item">
+                    <label>ราคาเซ็น</label>
+                    <input v-model="accrualsPrice" type="number" >
+                </div>
+                <div class="item">
                     <label>ประเภท</label>
                     <select v-model="type">
                         <option value="ขนม">ขนม</option>
@@ -47,6 +55,8 @@ export default {
                 {
                     product_name: `${this.productName}`,
                     barcode_number: `${this.barcodeNumber}`,
+                    cash_price: `${this.cashPrice}`,
+                    accruals_price: `${this.accrualsPrice}`,
                     type: `${this.type}`
                 });
 
@@ -113,8 +123,11 @@ export default {
 
 .modal-body {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     padding: 20px 10px;
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 500px;
 }
 
 .modal-body div {
@@ -177,5 +190,13 @@ export default {
     padding: 10px;
     border-radius: 5px;
     font-size: 16px;
+}
+.item {
+    padding: 0px;
+    flex: 1 1 200px;
+}
+.first-item {
+    padding: 0px;
+    flex: 1 1 300px;
 }
 </style>

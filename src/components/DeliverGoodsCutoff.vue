@@ -3,6 +3,9 @@
         <h1>ยอดการส่งสินค้าของผู้ฝากขาย</h1>
         <div class="sub-title">
             <div>
+                <VueDatePicker v-model="date" :range="{ partialRange: false }" />
+            </div>
+            <div>
                 <SellerAddModal :key="componentKey" id="input-add-form" v-show="isSellerAddModalVisible"
                     @close="closeModal" @data-updated="fetchData" />
             </div>
@@ -63,20 +66,24 @@
 <script>
 import { API_BASE_URL, ENDPOINTS, PAGENERATION } from './../../config';
 import axios from 'axios';
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
 export default {
     name: 'DeliverGoodsCutoff',
     data() {
         return {
             deliverGoodsCutoffData: [],
+            date: [],
         }
     },
+    components: {
+        VueDatePicker
+    },
     mounted() {
+        this.setDatePicker();
         this.fetchData();
     },
     methods: {
-        DeliverGoods(item) {
-
-        },
         async fetchData(pageNo, pageSize) {
             pageNo = Number(pageNo)
             if (isNaN(pageNo)) {
@@ -91,6 +98,8 @@ export default {
                         params: {
                             page_no: pageNo,
                             page_size: pageSize,
+                            start_date: this.date[0],
+                            end_date: this.date[1]
                         },
                     });
                 let data = response.data;
@@ -100,13 +109,37 @@ export default {
                 console.error('Error fetching data:', error);
             }
         },
-        DeliverGoods(item){
+        DeliverGoods(item) {
             this.$router.push({
-                name: 'deliverGood',
+                name: 'deliverGoodCutoffDetail',
                 query: {
                     seller_id: item.seller_id,
+                    date: JSON.stringify(this.date)
                 }
             });
+        },
+        datePicker() {
+            this.selectDatePicker = !this.selectDatePicker;
+        },
+        onDateSelected() {
+            this.selectDatePicker = false;
+        },
+        setDatePicker() {
+            let date = (new Date(2024, (new Date().getMonth()), 7));
+            let startDate = (new Date(date.setUTCHours(0, 0, 0, 0))).toISOString();
+
+            let oneDayInMilliseconds = 24 * 60 * 60 * 1000;
+            let endDateTimstamp = date.setMonth(date.getMonth() + 1) - oneDayInMilliseconds;
+
+            let endDate = new Date(endDateTimstamp).toISOString();
+
+            this.date = [startDate, endDate];
+        },
+    },
+    watch: {
+        date(newValue, oldValue) {
+            this.date = newValue;
+            this.fetchData();
         }
     }
 }
@@ -211,5 +244,18 @@ select {
 
 #cal1 {
     width: 10%;
+}
+
+.date-picker {
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    width: 200px;
+    height: 200px;
+    background-color: rgba(255, 0, 0, 0.7);
+    /* สีโปร่งใส */
+    z-index: 1;
+    /* ซ้อนอยู่ด้านบน */
+
 }
 </style>

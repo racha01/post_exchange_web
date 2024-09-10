@@ -21,8 +21,8 @@
                         <th id="cal1">ลำดับ</th>
                         <th>ประจำเดือน</th>
                         <th>วันที่ใบกำกับสินค้า</th>
-                        <th>ต้นทุน</th>
-                        <th>กำไร</th>
+                        <th>ต้นทุนทั้งหมด</th>
+                        <th>กำไรทั้งหมด</th>
                         <th>ตัวเลือก</th>
                     </tr>
                 </thead>
@@ -38,7 +38,7 @@
                                 รายละเอียด
                             </button>
                             <button @click="showPostExchangeStockUpdateModal(item)">แก้ไขข้อมูล</button>
-                            <PostExchangeStockUpdateModal :key="componentKey" :postExchangeStock="postExchangeStock"
+                            <PostExchangeStockUpdateModal :key="componentKey" :postExchangeStock="postExchangeStockDoc"
                                 @data-update="fetchData" v-show="isPostExchangeStockUpdateModalVisible"
                                 @close="closeModal" />
                         </td>
@@ -86,7 +86,7 @@ export default {
             postExchangeStockData: [],
             isPostExchangeStockAddModalVisible: false,
             isPostExchangeStockUpdateModalVisible: false,
-            postExchangeStock: {},
+            postExchangeStockDoc: {},
             componentKey: 0,
             searchQuery: '',
             pageNo: PAGENERATION.PAGE_NO,
@@ -135,9 +135,14 @@ export default {
             this.componentKey += 1;
         },
         async showPostExchangeStockUpdateModal(item) {
+            console.log(item)
             this.isPostExchangeStockUpdateModalVisible = true;
-            this.postExchangeStock = item;
-            this.$emit('postExchangeStock', this.postExchangeStock);
+            let response = await axios
+                    .get(`${API_BASE_URL}/${ENDPOINTS.POST_EXCHANGE_STOCKS}/${item._id}`);
+            let data = response.data;
+            this.postExchangeStockDoc = data;
+            console.log(this.postExchangeStockDoc)
+            this.$emit('postExchangeStock', this.postExchangeStockDoc);
             this.componentKey += 1;
         },
         // async showSellerUpdateModal(item) {

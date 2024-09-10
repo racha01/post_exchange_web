@@ -35,7 +35,10 @@
   justify-content: space-between;
   margin-bottom: 5px;
 }
-
+.sub-title-data{
+  display: flex;
+  align-items: center;
+}
 .sub-title-button button {
   font-weight: 500;
   font-size: 15px;

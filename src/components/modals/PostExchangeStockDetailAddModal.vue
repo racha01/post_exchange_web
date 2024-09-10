@@ -7,12 +7,17 @@
             <section class="modal-body">
                 <div class="item">
                     <label for="postExchangeProduct">ชื่อสินค้า</label>
-                    <select v-model="productId" @change="handleSelect(postExchangeProducts)">
-                        <option v-for="postExchangeProduct in postExchangeProducts" :key="postExchangeProduct"
-                            :value="postExchangeProduct.id">
-                            {{ `${postExchangeProduct.product_name}\n(${postExchangeProduct.barcode_number})` }}
-                        </option>
-                    </select>
+                    <v-select v-model="postExchangeProduct" item-value="id" class="select-height" :filter="fuseSearch"
+                        :options="postExchangeProducts" :get-option-label="(option) => option.product_name">
+                        <template #option="{ product_name, barcode_number }">
+                            {{ product_name }}
+                            <br />
+                            <cite>{{ barcode_number }}</cite>
+                        </template>
+                        <template #no-options="{}">
+                            ไม่มีรายการสินค้า
+                        </template>
+                    </v-select>
                 </div>
                 <div class="item">
                     <label>จำนวน</label>
@@ -54,6 +59,9 @@
 
 <script>
 import { uuid } from 'vue-uuid';
+import 'vue-select/dist/vue-select.css';
+import Fuse from 'fuse.js'
+import { computed } from 'vue';
 export default {
     name: 'PostExchangeStockDetailAddModal',
     props: {
@@ -93,20 +101,24 @@ export default {
             unitPrice: null,
             cashPrice: null,
             accrualsPrice: null,
-            qtyPerUnit: null
+            qtyPerUnit: null,
+            postExchangeProduct: {}
         }
     },
+    // computed:{
+    //     this.postExchangeProduct = this.postExchangeProduct
+    // },
     methods: {
         addData() {
             const product = {
                 id: uuid.v1(),
-                product_name: this.productName,
-                barcode_number: this.barcodeNumber,
+                product_name: this.postExchangeProduct.product_name,
+                barcode_number: this.postExchangeProduct.barcode_number,
                 unit_qty: this.unitQty,
                 unit_price: this.unitPrice,
                 total_price: (this.unitQty * this.unitPrice),
-                cash_price: this.cashPrice,
-                accruals_price: this.accrualsPrice,
+                cash_price: this.postExchangeProduct.cash_price,
+                accruals_price: this.postExchangeProduct.accruals_price,
                 qty_per_unit: this.qtyPerUnit,
                 is_sell_post_exchange: this.isSellPostExchange
             }
@@ -121,19 +133,28 @@ export default {
                 'product_post_exchanges': this.productPostExchanges,
                 'excluded_product_post_exchanges': this.excludedProductPostExchanges,
             });
-
-            // !this.productName ? this.productName : document.getElementById('productName').value = '';
-            // !this.barcodeNumber ? this.barcodeNumber : document.getElementById('barcodeNumber').value = '';
             this.unitQty = null;
             this.unitPrice = null;
             this.cashPrice = null;
             this.accrualsPrice = null;
             this.qtyPerUnit = null;
         },
-        handleSelect(postExchangeProducts) {
-            this.productName = postExchangeProducts.find(x => x.id === event.target.value)?.product_name
-            this.barcodeNumber = postExchangeProducts.find(x => x.id === event.target.value)?.barcode_number
-            
+        handleSelect() {
+            this.productName = this.postExchangeProduct.product_name
+            this.barcodeNumber = this.postExchangeProduct.barcode_number
+            this.cashPrice = this.postExchangeProduct.cash_price
+            this.accrualsPrice = this.postExchangeProduct.accruals_price
+
+        },
+        fuseSearch(options, search) {
+            const fuse = new Fuse(options, {
+                keys: ['product_name', 'barcode_number'],
+                shouldSort: true,
+            })
+
+            return search.length
+                ? fuse.search(search).map(({ item }) => item)
+                : fuse.list
         },
         close() {
             this.$emit('close');
@@ -262,6 +283,7 @@ select {
     position: relative;
     color: rgb(88, 88, 88);
     top: 11px;
+    z-index: 10;
 }
 
 .btn-close {
@@ -297,5 +319,16 @@ select {
     padding: 10px;
     border-radius: 5px;
     font-size: 16px;
+}
+
+.select-height>>>.vs__dropdown-toggle {
+    height: 50px !important;
+    margin-bottom: -10px;
+    text-align: start;
+
+}
+
+.select-height>>>.vs__search::placeholder {
+    text-align: center;
 }
 </style>
