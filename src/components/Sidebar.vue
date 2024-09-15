@@ -5,25 +5,25 @@ import { RouterLink, RouterView } from 'vue-router'
     <div class="content">
         <div class="box logo">logo</div>
         <div class="box">
-            <RouterLink to="/home" id="menu">หน้าหลัก</RouterLink>
+            <RouterLink to="/home" id="menu"><p>หน้าหลัก</p></RouterLink>
         </div>
         <div class="box">
-            <RouterLink to="/seller" id="menu">ผู้ฝากขาย</RouterLink>
+            <RouterLink to="/seller" id="menu"><p>ผู้ฝากขาย</p></RouterLink>
         </div>
         <div class="box">
-            <RouterLink to="/product" id="menu">สินค้าผู้ฝากขาย</RouterLink>
+            <RouterLink to="/product" id="menu"><p>สินค้าผู้ฝากขาย</p></RouterLink>
         </div>
         <div class="box">
-            <RouterLink to="/deliver-good" id="menu">รายการส่งสินค้าของผู้ฝากขาย</RouterLink>
+            <RouterLink to="/deliver-good" id="menu"><p>รายการส่งสินค้าของผู้ฝากขาย</p></RouterLink>
         </div>
         <div class="box">
-            <RouterLink to="/deliver-good/cut-off" id="menu">ยอดการส่งสินค้าของผู้ฝากขาย</RouterLink>
+            <RouterLink to="/deliver-good/cut-off" id="menu"><p>ยอดการส่งสินค้าของผู้ฝากขาย</p></RouterLink>
         </div>
         <div class="box">
-            <RouterLink to="/post-exchange-stock" id="menu">รายการซื้อสินค้าเข้า PX</RouterLink>
+            <RouterLink to="/post-exchange-stock" id="menu"><p>รายการซื้อสินค้าเข้า PX</p></RouterLink>
         </div>
         <div class="box">
-            <RouterLink to="/post-exchange-product" id="menu">สินค้าใน PX</RouterLink>
+            <RouterLink to="/post-exchange-product" id="menu"><p>สินค้าใน PX</p></RouterLink>
         </div>
     </div>
 
@@ -39,6 +39,7 @@ import { RouterLink, RouterView } from 'vue-router'
     top: 0px;
     height: 100vh;
     margin-top: 0px;
+    
 }
 
 .box {
@@ -50,9 +51,14 @@ import { RouterLink, RouterView } from 'vue-router'
     border-bottom: 2px solid #a6a6a6;
 }
 
+.box p{
+    text-align: start;
+    margin-left: 10px;
+}
+
 .logo {
     height: 100px;
-    margin-top: -280px;
+    margin-top: -250px;
 }
 
 #menu {

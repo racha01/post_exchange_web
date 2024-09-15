@@ -14,9 +14,19 @@
                     @post-exchange-stock-detail-add="updateData" :products="productPostExchanges"
                     :excludedProducts="excludedProductPostExchanges" :postExchangeProducts="postExchangeProductData" />
             </div>
-            <div>
-                <input @input="updateQuery($event.target.value)" class="sub-title-input" type="text"
-                    placeholder="Search">
+            <div class="sub-title-end">
+                <div style="margin-right: 5px;" class="sub-title-button">
+                    <button>
+                        <download-excel class="btn btn-default" :data="formattedData" :fields="json_fields"
+                            header="รายละเอียดการซื้อสินค้าเข้าPX" worksheet="Sheet1"
+                            name="รายละเอียดการซื้อสินค้าเข้าPX.xls">
+                        </download-excel>
+                    </button>
+                </div>
+                <div>
+                    <input @input="updateQuery($event.target.value)" class="sub-title-input" type="text"
+                        placeholder="Search">
+                </div>
             </div>
         </div>
         <div>
@@ -45,7 +55,7 @@
                         <td>{{ item.qty_per_unit }}</td>
                         <td>{{ item.cash_price }}</td>
                         <td>{{ item.accruals_price }}</td>
-                        <td v-if="item.is_sell_post_exchange">{{ (item.unit_qty * item.accruals_price *
+                        <td v-if="item.is_sell_post_exchange">{{ (item.unit_qty * item.cash_price *
                             item.qty_per_unit) - item.total_price }} - {{
                                 (item.unit_qty * item.accruals_price * item.qty_per_unit) - item.total_price }}</td>
                         <td v-else></td>
@@ -117,9 +127,57 @@ export default {
             pageNo: PAGENERATION.PAGE_NO,
             pageSize: PAGENERATION.PAGE_SIZE,
             isFirstData: null,
-            token: this.$cookies.get('token')
+            token: this.$cookies.get('token'),
+            json_fields: {
+                "ลำดับ": "number",
+                "ชื่อสินค้า": "product_name",
+                "บาร์โค้ด": "barcode_number",
+                "จำนวน": "unit_qty",
+                "ราคา": "unit_price",
+                "จำนวน/หน่วย": "qty_per_unit",
+                "ราคาขายสด": "cash_price",
+                "ราคาขายเซ็น": "accruals_price",
+                "กำไรเงินสด": "np_cash_price",
+                "กำไรเงินเซ็น": "np_accruals_price"
+            },
+            json_meta: [
+                [
+                    {
+                        key: "charset",
+                        value: "utf-8",
+                    },
+                ],
+            ],
 
         };
+    },
+    computed: {
+        filteredItems() {
+            if (!this.postExchangeStockDetailData) return null;
+            return this.postExchangeStockDetailData.filter(item => {
+                return (
+                    item.product_name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                    item.barcode_number.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                    item.unit_qty.toString().toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                    item.unit_price.toString().toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                    item.qty_per_unit.toString().toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                    item.cash_price.toString().toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                    item.accruals_price.toString().toLowerCase().includes(this.searchQuery.toLowerCase())
+                );
+            });
+        },
+        formattedData() {
+            let data = this.filteredItems ?? this.postExchangeStockDetailData
+            return Array.isArray(data) ? data.map((item, index) => ({
+                number: index + 1,
+                date: this.toDateThai(item.invoice_date),
+                np_cash_price: item.is_sell_post_exchange ? (item.unit_qty * item.cash_price *
+                    item.qty_per_unit) - item.total_price : 0,
+                np_accruals_price: item.is_sell_post_exchange ? (item.unit_qty * item.accruals_price *
+                    item.qty_per_unit) - item.total_price : 0,
+                ...item
+            })) : [];
+        }
     },
     mounted() {
         this.id = this.$route.query.id;
@@ -187,9 +245,9 @@ export default {
 
             await axios
                 .get(`${API_BASE_URL}/${ENDPOINTS.POST_EXCHANGE_PRODUCTS}`, {
-                    headers:{
-                            Authorization: this.token
-                        }
+                    headers: {
+                        Authorization: this.token
+                    }
                 })
                 .then((res) => (this.postExchangeProductData = res.data.items))
 
@@ -201,9 +259,9 @@ export default {
             this.isPostExchangeStockDetailUpdateModalVisible = true;
             await axios
                 .get(`${API_BASE_URL}/${ENDPOINTS.POST_EXCHANGE_PRODUCTS}`, {
-                    headers:{
-                            Authorization: this.token
-                        }
+                    headers: {
+                        Authorization: this.token
+                    }
                 })
                 .then((res) => (this.postExchangeProductData = res.data.items))
             this.$emit('postExchangeProducts', this.postExchangeProductData);
@@ -227,6 +285,12 @@ export default {
             const month = date.getUTCMonth();
             const year = (date.getUTCFullYear() + 543).toString().slice(-2);
             return `${day}-${months[month]}-${year}`
+        },
+        updateQuery(value) {
+            clearTimeout(this.debounceTimeout);
+            this.debounceTimeout = setTimeout(() => {
+                this.searchQuery = value;
+            }, 300);
         },
 
     }

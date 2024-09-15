@@ -15,9 +15,19 @@
                 <DeliverGoodAddModal :key="componentKey" id="input-add-form" v-show="isDeliverGoodAddModalVisible"
                     @close="closeModal" @data-updated="fetchData" :products="productData" />
             </div>
-            <div>
-                <input @input="updateQuery($event.target.value)" class="sub-title-input" type="text"
-                    placeholder="Searfont-size: 16px;ch">
+            <div class="sub-title-end">
+                <div style="margin-right: 5px;" class="sub-title-button">
+                    <button>
+                        <download-excel class="btn btn-default" :data="formattedData" :fields="json_fields"
+                            header="รายการส่งสินค้า" worksheet="Sheet1" name="รายการส่งสินค้า.xls">
+                        </download-excel>
+                    </button>
+                </div>
+                <div>
+                    <input @input="updateQuery($event.target.value)" class="sub-title-input" type="text"
+                        placeholder="Search">
+                </div>
+
             </div>
         </div>
         <table>
@@ -116,6 +126,15 @@ export default {
                     item.deliver_good_date.toString().toLowerCase().includes(this.searchQuery.toLowerCase())
                 );
             });
+        },
+        formattedData() {
+            let data = this.filteredItems ?? this.deliverGoodData.items
+            return Array.isArray(data) ? data.map((item, index) => ({
+                number: index + 1,
+                date: this.toDateThai(item.deliver_good_date),
+                total_price: (item.wholesale_price * item.amount) - (item.wholesale_price * item.leftovers),
+                ...item
+            })) : [];
         }
     },
     data() {
@@ -132,7 +151,27 @@ export default {
             sellerId: null,
             date: [],
             sellerName: '',
-            token: this.$cookies.get('token')
+            token: this.$cookies.get('token'),
+            json_fields: {
+                "ลำดับ": "number",
+                "วันที่": "date",
+                "ชื่อผู้ฝากขาย": "seller_name",
+                "ชื่อสินค้า": "product_name",
+                "ราคาส่ง": "wholesale_price",
+                "ราคาขายสด": "cash_price",
+                "ราคาขายเซ็น": "accruals_price",
+                "จำนวน": "amount",
+                "จำหน่าย": "leftovers",
+                "ราคารวม": "total_price"
+            },
+            json_meta: [
+                [
+                    {
+                        key: "charset",
+                        value: "utf-8",
+                    },
+                ],
+            ],
         };
     },
     methods: {
@@ -348,5 +387,9 @@ select {
 
 #cal1 {
     width: 10%;
+}
+
+.sub-title-end {
+    display: flex;
 }
 </style>

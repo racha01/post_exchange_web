@@ -9,9 +9,19 @@
                 <PostExchangeProductAddModal :key="componentKey" id="input-add-form"
                     v-show="isPostExchangeProductAddModalVisible" @close="closeModal" @data-updated="fetchData" />
             </div>
-            <div>
-                <input @input="updateQuery($event.target.value)" class="sub-title-input" type="text"
-                    placeholder="Search">
+            <div class="sub-title-end">
+                <div style="margin-right: 5px;" class="sub-title-button">
+                    <button>
+                        <download-excel class="btn btn-default" :data="formattedData" :fields="json_fields"
+                            header="สินค้าในPX" worksheet="Sheet1" name="สินค้าในPX.xls">
+                        </download-excel>
+                    </button>
+                </div>
+                <div>
+                    <input @input="updateQuery($event.target.value)" class="sub-title-input" type="text"
+                        placeholder="Search">
+                </div>
+
             </div>
         </div>
         <div>
@@ -32,7 +42,7 @@
                         <td>{{ index + 1 }}</td>
                         <td style="text-align: start;">{{ item.product_name }}</td>
                         <td>{{ item.barcode_number }}</td>
-                        <td>{{ item.cash_price}}</td>
+                        <td>{{ item.cash_price }}</td>
                         <td>{{ item.accruals_price }}</td>
                         <td>{{ item.type }}</td>
                         <td>
@@ -84,7 +94,23 @@ export default {
             searchQuery: '',
             pageNo: PAGENERATION.PAGE_NO,
             pageSize: PAGENERATION.PAGE_SIZE,
-            token: this.$cookies.get('token')
+            token: this.$cookies.get('token'),
+            json_fields: {
+                "ลำดับ": "number",
+                "ชื่อสินค้า": "product_name",
+                "บาร์โค้ด": "barcode_number",
+                "ราคาขายสด/ชิ้น": "cash_price",
+                "ราคาขายเซ็น/ชิ้น": "accruals_price",
+                "ประเภท": "type",
+            },
+            json_meta: [
+                [
+                    {
+                        key: "charset",
+                        value: "utf-8",
+                    },
+                ],
+            ],
         };
     },
     mounted() {
@@ -104,6 +130,13 @@ export default {
                     item.type.toLowerCase().includes(this.searchQuery.toLowerCase())
                 );
             });
+        },
+        formattedData() {
+            let data = this.filteredItems ?? this.postExchangeProductData.items
+            return Array.isArray(data) ? data.map((item, index) => ({
+                number: index + 1,
+                ...item
+            })) : [];
         }
     },
     methods: {
@@ -123,7 +156,7 @@ export default {
                             page_no: pageNo,
                             page_size: pageSize,
                         },
-                        headers:{
+                        headers: {
                             Authorization: this.token
                         }
                     });
@@ -260,4 +293,5 @@ select {
 #cal1 {
     width: 10%;
 }
+
 </style>

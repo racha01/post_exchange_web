@@ -9,10 +9,19 @@
                 <ProductAddModal :sellers="sellerData.items" :key="componentKey" id="input-add-form"
                     v-show="isProductAddModalVisible" @close="closeModal" @data-updated="fetchData" />
             </div>
-            <div>
-                <input @input="updateQuery($event.target.value)" class="sub-title-input" type="text"
-                    placeholder="Search">
-                <!-- <font-awesome-icon icon="search" /> -->
+            <div class="sub-title-end">
+                <div style="margin-right: 5px;" class="sub-title-button">
+                    <button>
+                        <download-excel class="btn btn-default" :data="formattedData" :fields="json_fields"
+                            header="สินค้าของผู้ฝากขาย" worksheet="Sheet1" name="สินค้าของผู้ฝากขาย.xls">
+                        </download-excel>
+                    </button>
+                </div>
+                <div>
+                    <input @input="updateQuery($event.target.value)" class="sub-title-input" type="text"
+                        placeholder="Search">
+                </div>
+
             </div>
         </div>
         <table>
@@ -91,6 +100,13 @@ export default {
                     item.accruals_price.toString().toLowerCase().includes(this.searchQuery.toLowerCase())
                 );
             });
+        },
+        formattedData() {
+            let data = this.filteredItems ?? this.productData.items
+            return Array.isArray(data) ? data.map((item, index) => ({
+                number: index + 1,
+                ...item
+            })) : [];
         }
     },
     name: "Product",
@@ -109,7 +125,25 @@ export default {
             pageNo: PAGENERATION.PAGE_NO,
             pageSize: PAGENERATION.PAGE_SIZE,
             sellerData: [],
-            token: this.$cookies.get('token')
+            token: this.$cookies.get('token'),
+            json_fields: {
+                "ลำดับ": "number",
+                "รหัสผู้ฝากขาย": "seller_code",
+                "ชื่อผู้ฝากขาย": "seller_name",
+                "รหัสสินค้า": "product_code",
+                "ชื่อสินค้า": "product_name",
+                "ราคาส่ง": "wholesale_price",
+                "ราคาขายสด": "cash_price",
+                "ราคาขายเซ็น": "accruals_price",
+            },
+            json_meta: [
+                [
+                    {
+                        key: "charset",
+                        value: "utf-8",
+                    },
+                ],
+            ],
         };
     },
     mounted() {
@@ -302,5 +336,9 @@ select {
 
 #cal1 {
     width: 10%;
+}
+
+.sub-title-end {
+    display: flex;
 }
 </style>

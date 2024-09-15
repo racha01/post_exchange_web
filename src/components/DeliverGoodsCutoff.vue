@@ -9,9 +9,20 @@
                 <SellerAddModal :key="componentKey" id="input-add-form" v-show="isSellerAddModalVisible"
                     @close="closeModal" @data-updated="fetchData" />
             </div>
-            <div>
-                <input @input="updateQuery($event.target.value)" class="sub-title-input" type="text"
-                    placeholder="Search">
+            <div class="sub-title-end">
+                <div style="margin-right: 5px;" class="sub-title-button">
+                    <button>
+                        <download-excel class="btn btn-default" :data="formattedData" :fields="json_fields"
+                            header="ยอดการส่งสินค้าของผู้ฝากขาย" worksheet="Sheet1"
+                            name="ยอดการส่งสินค้าของผู้ฝากขาย.xls">
+                        </download-excel>
+                    </button>
+                </div>
+                <div>
+                    <input @input="updateQuery($event.target.value)" class="sub-title-input" type="text"
+                        placeholder="Search">
+                </div>
+
             </div>
         </div>
         <div>
@@ -74,11 +85,49 @@ export default {
         return {
             deliverGoodsCutoffData: [],
             date: [],
-            token: this.$cookies.get('token')
+            token: this.$cookies.get('token'),
+            searchQuery: '',
+            json_fields: {
+                "ลำดับ": "number",
+                "รหัสผู้ฝากขาย": "seller_code",
+                "ชื่อผู้ฝากขาย": "seller_name",
+                "ต้นทุน": "total_cost",
+                "กำไรเงินสด": "net_profit_cash_price",
+                "กำไรเงินเซ็น": "net_profit_accruals_price",
+            },
+            json_meta: [
+                [
+                    {
+                        key: "charset",
+                        value: "utf-8",
+                    },
+                ],
+            ],
         }
     },
     components: {
         VueDatePicker
+    },
+    computed: {
+        filteredItems() {
+            if (!this.deliverGoodsCutoffData.items) return null;
+            return this.deliverGoodsCutoffData.items.filter(item => {
+                return (
+                    item.seller_code.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                    item.seller_name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                    item.total_cost.toString().toLowerCase().includes(this.searchQuery.toLowerCase()) || 
+                    item.net_profit_cash_price.toString().toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                    item.net_profit_accruals_price.toString().toLowerCase().includes(this.searchQuery.toLowerCase())
+                );
+            });
+        },
+        formattedData() {
+            let data = this.filteredItems ?? this.deliverGoodsCutoffData.items
+            return Array.isArray(data) ? data.map((item, index) => ({
+                number: index + 1,
+                ...item
+            })) : [];
+        }
     },
     mounted() {
         this.setDatePicker();
@@ -138,6 +187,12 @@ export default {
             let endDate = new Date(endDateTimstamp).toISOString();
 
             this.date = [startDate, endDate];
+        },
+        updateQuery(value) {
+            clearTimeout(this.debounceTimeout);
+            this.debounceTimeout = setTimeout(() => {
+                this.searchQuery = value;
+            }, 300);
         },
     },
     watch: {
@@ -257,9 +312,11 @@ select {
     width: 200px;
     height: 200px;
     background-color: rgba(255, 0, 0, 0.7);
-    /* สีโปร่งใส */
     z-index: 1;
-    /* ซ้อนอยู่ด้านบน */
 
+}
+
+.sub-title-end {
+    display: flex;
 }
 </style>

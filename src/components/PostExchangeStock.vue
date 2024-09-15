@@ -9,9 +9,18 @@
                 <PostExchangeStockAddModal :key="componentKey" id="input-add-form"
                     v-show="isPostExchangeStockAddModalVisible" @close="closeModal" />
             </div>
-            <div>
-                <input @input="updateQuery($event.target.value)" class="sub-title-input" type="text"
-                    placeholder="Search">
+            <div class="sub-title-end">
+                <div style="margin-right: 5px;" class="sub-title-button">
+                    <button>
+                        <download-excel class="btn btn-default" :data="formattedData" :fields="json_fields"
+                            header="รายการซื้อสินค้าเข้าPX" worksheet="Sheet1" name="รายการซื้อสินค้าเข้าPX.xls">
+                        </download-excel>
+                    </button>
+                </div>
+                <div>
+                    <input @input="updateQuery($event.target.value)" class="sub-title-input" type="text"
+                        placeholder="Search">
+                </div>
             </div>
         </div>
         <div>
@@ -31,7 +40,7 @@
                         <td>{{ index + 1 }}</td>
                         <td>{{ item.monthly }}</td>
                         <td>{{ toDateThai(item.invoice_date) }}</td>
-                        <td>{{ item.cost  }}</td>
+                        <td>{{ item.cost }}</td>
                         <td>{{ item.net_profit_cash_price_all }} - {{ item.net_profit_accruals_price_all }}</td>
                         <td>
                             <button style="margin-right: 5px;" @click="toPostExchangeStockDetail(item)">
@@ -91,7 +100,23 @@ export default {
             searchQuery: '',
             pageNo: PAGENERATION.PAGE_NO,
             pageSize: PAGENERATION.PAGE_SIZE,
-            token: this.$cookies.get('token')
+            token: this.$cookies.get('token'),
+            json_fields: {
+                "ลำดับ": "number",
+                "ประจำเดือน": "monthly",
+                "วันที่ใบกำกับสินค้า": "date",
+                "ต้นทุนทั้งหมด": "cost",
+                "กำไรเงินสดทั้งหมด": "net_profit_cash_price_all",
+                "กำไรเงินเซ็นทั้งหมด": "net_profit_accruals_price_all"
+            },
+            json_meta: [
+                [
+                    {
+                        key: "charset",
+                        value: "utf-8",
+                    },
+                ],
+            ],
         };
     },
     mounted() {
@@ -100,6 +125,28 @@ export default {
     components: {
         PostExchangeStockAddModal,
         PostExchangeStockUpdateModal
+    },
+    computed: {
+        filteredItems() {
+            if (!this.postExchangeStockData.items) return null;
+            return this.postExchangeStockData.items.filter(item => {
+                return (
+                    item.monthly.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                    item.invoice_date.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                    item.cost.toString().toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                    item.net_profit_cash_price_all.toString().toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                    item.net_profit_accruals_price_all.toString().toLowerCase().includes(this.searchQuery.toLowerCase())
+                );
+            });
+        },
+        formattedData() {
+            let data = this.filteredItems ?? this.postExchangeStockData.items
+            return Array.isArray(data) ? data.map((item, index) => ({
+                number: index + 1,
+                date: this.toDateThai(item.invoice_date),
+                ...item
+            })) : [];
+        }
     },
     methods: {
         handleSelection(event) {
@@ -123,7 +170,7 @@ export default {
                             page_no: pageNo,
                             page_size: pageSize,
                         },
-                        headers:{
+                        headers: {
                             Authorization: this.token
                         }
                     });
@@ -142,11 +189,11 @@ export default {
             console.log(item)
             this.isPostExchangeStockUpdateModalVisible = true;
             let response = await axios
-                    .get(`${API_BASE_URL}/${ENDPOINTS.POST_EXCHANGE_STOCKS}/${item._id}`, {
-                        headers:{
-                            Authorization: this.token
-                        }
-                    });
+                .get(`${API_BASE_URL}/${ENDPOINTS.POST_EXCHANGE_STOCKS}/${item._id}`, {
+                    headers: {
+                        Authorization: this.token
+                    }
+                });
             let data = response.data;
             this.postExchangeStockDoc = data;
             console.log(this.postExchangeStockDoc)

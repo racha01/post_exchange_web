@@ -9,10 +9,18 @@
                 <SellerAddModal :key="componentKey" id="input-add-form" v-show="isSellerAddModalVisible"
                     @close="closeModal" @data-updated="fetchData" />
             </div>
-            <div>
-                <input @input="updateQuery($event.target.value)" class="sub-title-input" type="text"
-                    placeholder="Search">
-                <!-- <font-awesome-icon icon="search" /> -->
+            <div class="sub-title-end">
+                <div style="margin-right: 5px;" class="sub-title-button">
+                    <button>
+                        <download-excel class="btn btn-default" :data="formattedData" :fields="json_fields"
+                            header="ผู้ฝากขายสินค้า" worksheet="Sheet1" name="ผู้ฝากขายสินค้า.xls">
+                        </download-excel>
+                    </button>
+                </div>
+                <div>
+                    <input @input="updateQuery($event.target.value)" class="sub-title-input" type="text"
+                        placeholder="Search">
+                </div>
             </div>
         </div>
         <div>
@@ -71,6 +79,7 @@ import { API_BASE_URL, ENDPOINTS, PAGENERATION } from './../../config';
 
 library.add(faSearch);
 import axios from 'axios';
+import JsonExcel from "vue-json-excel3";
 
 const api = axios.create({
     baseURL: `${API_BASE_URL}`
@@ -85,6 +94,13 @@ export default {
                     item.seller_name.toLowerCase().includes(this.searchQuery.toLowerCase())
                 );
             });
+        },
+        formattedData() {
+            let data = this.filteredItems ?? this.data.items
+            return Array.isArray(data) ? data.map((item, index) => ({
+                number: index + 1,
+                ...item
+            })) : [];
         }
     },
     name: "seller",
@@ -102,7 +118,20 @@ export default {
             searchQuery: '',
             pageNo: PAGENERATION.PAGE_NO,
             pageSize: PAGENERATION.PAGE_SIZE,
-            token: this.$cookies.get('token')
+            token: this.$cookies.get('token'),
+            json_fields: {
+                "ลำดับ": "number",
+                "รหัสผู้ฝากขาย": "seller_code",
+                "ชื่อผู้ฝากขาย": "seller_name"
+            },
+            json_meta: [
+                [
+                    {
+                        key: "charset",
+                        value: "utf-8",
+                    },
+                ],
+            ],
         };
     },
     mounted() {
@@ -169,7 +198,7 @@ export default {
             this.debounceTimeout = setTimeout(() => {
                 this.searchQuery = value;
             }, 300);
-        },
+        }
     }
 }
 
@@ -276,5 +305,9 @@ select {
 
 #cal1 {
     width: 10%;
+}
+
+.sub-title-end{
+    display: flex;
 }
 </style>

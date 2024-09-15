@@ -19,9 +19,12 @@ import vSelect from 'vue-select'
 
 import VueCookies from 'vue-cookies'
 
+import JsonExcel from "vue-json-excel3";
+
 const app = withUUID(createApp(App));
 app.component('VueDatePicker', VueDatePicker);
 app.component('v-select', vSelect)
+app.component("downloadExcel", JsonExcel);
 app.use(VueCookies)
 app.use(router);
 app.use(store);
