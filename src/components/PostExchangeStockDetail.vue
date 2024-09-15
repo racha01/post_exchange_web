@@ -5,7 +5,8 @@
         <div class="sub-title">
             <div class="sub-title-button">
                 <button @click="showPostExchangeStockDetailAddModal">เพิ่มข้อมูล</button>
-                <button v-if="postExchangeStockDetailData.length" style="margin-left: 5px;" @click="dataConfirm">ยืนยันข้อมูล</button>
+                <button v-if="postExchangeStockDetailData.length" style="margin-left: 5px;"
+                    @click="dataConfirm">ยืนยันข้อมูล</button>
             </div>
             <div>
                 <PostExchangeStockDetailAddModal :key="componentKey" id="input-add-form"
@@ -44,7 +45,8 @@
                         <td>{{ item.qty_per_unit }}</td>
                         <td>{{ item.cash_price }}</td>
                         <td>{{ item.accruals_price }}</td>
-                        <td v-if="item.is_sell_post_exchange">{{ (item.unit_qty * item.accruals_price * item.qty_per_unit) - item.total_price}} - {{
+                        <td v-if="item.is_sell_post_exchange">{{ (item.unit_qty * item.accruals_price *
+                            item.qty_per_unit) - item.total_price }} - {{
                                 (item.unit_qty * item.accruals_price * item.qty_per_unit) - item.total_price }}</td>
                         <td v-else></td>
                         <td>
@@ -114,7 +116,8 @@ export default {
             searchQuery: '',
             pageNo: PAGENERATION.PAGE_NO,
             pageSize: PAGENERATION.PAGE_SIZE,
-            isFirstData: null
+            isFirstData: null,
+            token: this.$cookies.get('token')
 
         };
     },
@@ -144,6 +147,11 @@ export default {
                             excluded_product_post_exchanges: [...this.excludedProductPostExchanges],
                             cost: this.cost,
                             invoice_date: `${this.invoiceDate}`
+                        },
+                        {
+                            headers: {
+                                Authorization: this.token
+                            }
                         });
 
                     this.$router.back({
@@ -161,7 +169,11 @@ export default {
                             excluded_product_post_exchanges: [...this.excludedProductPostExchanges],
                             cost: this.cost,
                             invoice_date: `${this.invoiceDate}`
-                        });
+                        }, {
+                        headers: {
+                            Authorization: this.token
+                        }
+                    });
 
                     this.$router.back({
                         name: 'postExchangeStock'
@@ -174,7 +186,11 @@ export default {
             this.isPostExchangeStockDetailAddModalVisible = true;
 
             await axios
-                .get(`${API_BASE_URL}/${ENDPOINTS.POST_EXCHANGE_PRODUCTS}`)
+                .get(`${API_BASE_URL}/${ENDPOINTS.POST_EXCHANGE_PRODUCTS}`, {
+                    headers:{
+                            Authorization: this.token
+                        }
+                })
                 .then((res) => (this.postExchangeProductData = res.data.items))
 
             this.$emit('postExchangeProducts', this.postExchangeProductData.items);
@@ -184,7 +200,11 @@ export default {
         async showPostExchangeStockDetailUpdateModal(item) {
             this.isPostExchangeStockDetailUpdateModalVisible = true;
             await axios
-                .get(`${API_BASE_URL}/${ENDPOINTS.POST_EXCHANGE_PRODUCTS}`)
+                .get(`${API_BASE_URL}/${ENDPOINTS.POST_EXCHANGE_PRODUCTS}`, {
+                    headers:{
+                            Authorization: this.token
+                        }
+                })
                 .then((res) => (this.postExchangeProductData = res.data.items))
             this.$emit('postExchangeProducts', this.postExchangeProductData);
 

@@ -90,7 +90,8 @@ export default {
             componentKey: 0,
             searchQuery: '',
             pageNo: PAGENERATION.PAGE_NO,
-            pageSize: PAGENERATION.PAGE_SIZE
+            pageSize: PAGENERATION.PAGE_SIZE,
+            token: this.$cookies.get('token')
         };
     },
     mounted() {
@@ -122,6 +123,9 @@ export default {
                             page_no: pageNo,
                             page_size: pageSize,
                         },
+                        headers:{
+                            Authorization: this.token
+                        }
                     });
                 let data = response.data;
                 this.postExchangeStockData = data;
@@ -138,21 +142,17 @@ export default {
             console.log(item)
             this.isPostExchangeStockUpdateModalVisible = true;
             let response = await axios
-                    .get(`${API_BASE_URL}/${ENDPOINTS.POST_EXCHANGE_STOCKS}/${item._id}`);
+                    .get(`${API_BASE_URL}/${ENDPOINTS.POST_EXCHANGE_STOCKS}/${item._id}`, {
+                        headers:{
+                            Authorization: this.token
+                        }
+                    });
             let data = response.data;
             this.postExchangeStockDoc = data;
             console.log(this.postExchangeStockDoc)
             this.$emit('postExchangeStock', this.postExchangeStockDoc);
             this.componentKey += 1;
         },
-        // async showSellerUpdateModal(item) {
-        //     this.isSellerUpdateModalVisible = true;
-        //     await axios
-        //         .get(`${API_BASE_URL}/${ENDPOINTS.SELLERS}/${item.id}`)
-        //         .then((res) => (this.seller = res.data))
-        //     this.$emit('seller', this.seller);
-        //     this.componentKey += 1;
-        // },
         closeModal() {
             this.isPostExchangeStockAddModalVisible = false;
             this.isPostExchangeStockUpdateModalVisible = false;

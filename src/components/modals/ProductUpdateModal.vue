@@ -60,7 +60,8 @@ export default {
         return {
             isDropdownVisible: true,
             isVisible: false,
-            sellerId: ''
+            sellerId: '',
+            token: this.$cookies.get('token')
         }
     },
     props: {
@@ -81,13 +82,17 @@ export default {
         async updateData() {
             const res = await axios.put(`${API_BASE_URL}/${ENDPOINTS.PRODUCTS}/${this.product.id}`,
                 {
-                    seller_id: `${!this.sellerId ? this.product.seller_id: this.sellerId}`,
+                    seller_id: `${!this.sellerId ? this.product.seller_id : this.sellerId}`,
                     product_code: `${this.productCode ?? this.product.product_code}`,
                     product_name: `${this.productName ?? this.product.product_name}`,
                     wholesale_price: `${this.wholesalePrice ?? this.product.wholesale_price}`,
                     cash_price: `${this.cashPrice ?? this.product.cash_price}`,
                     accruals_price: `${this.accrualsPrice ?? this.product.accruals_price}`,
-                });
+                }, {
+                headers: {
+                    Authorization: this.token
+                }
+            });
             res.data.json;
             this.$emit('product-update', res.data.json);
             this.$emit('close');

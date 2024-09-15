@@ -47,10 +47,11 @@ const months = [
 ];
 export default {
     name: 'PostExchangeStockUpdateModal',
-    data(){
-        return{
+    data() {
+        return {
             monthly: '',
-            monthAndYears: []
+            monthAndYears: [],
+            token: this.$cookies.get('token')
         }
     },
     props: {
@@ -117,6 +118,11 @@ export default {
                     excluded_product_post_exchanges: [...this.postExchangeStock.excluded_product_post_exchanges],
                     invoice_date: `${!this.invoice_date ? this.postExchangeStock.invoice_date : this.invoice_date}`,
                     cost: `${!this.cost ? this.postExchangeStock.cost : this.cost}`
+                },
+                {
+                    headers: {
+                        Authorization: this.token
+                    }
                 });
             this.$emit('data-update', res.data.json);
             this.$emit('close');
@@ -124,7 +130,7 @@ export default {
         close() {
             this.$emit('close');
         },
-        
+
     }
 
 }

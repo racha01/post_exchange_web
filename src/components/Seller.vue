@@ -71,6 +71,10 @@ import { API_BASE_URL, ENDPOINTS, PAGENERATION } from './../../config';
 
 library.add(faSearch);
 import axios from 'axios';
+
+const api = axios.create({
+    baseURL: `${API_BASE_URL}`
+});
 export default {
     computed: {
         filteredItems() {
@@ -97,7 +101,8 @@ export default {
             componentKey: 0,
             searchQuery: '',
             pageNo: PAGENERATION.PAGE_NO,
-            pageSize: PAGENERATION.PAGE_SIZE
+            pageSize: PAGENERATION.PAGE_SIZE,
+            token: this.$cookies.get('token')
         };
     },
     mounted() {
@@ -110,8 +115,9 @@ export default {
             this.pageSize = selectedValue;
         },
         async fetchData(pageNo, pageSize) {
+            this.$cookies.set('isLogin', true, '1d')
+            console.log(this.$cookies.get('isLogin'))
             pageNo = Number(pageNo)
-            console.log(pageSize)
             if (isNaN(pageNo)) {
                 pageNo = this.pageNo
             }
@@ -119,12 +125,15 @@ export default {
                 pageSize = this.pageSize
             }
             try {
-                let response = await axios
-                    .get(`${API_BASE_URL}/${ENDPOINTS.SELLERS}`, {
+                let response = await api
+                    .get(`/${ENDPOINTS.SELLERS}`, {
                         params: {
                             page_no: pageNo,
                             page_size: pageSize,
                         },
+                        headers: {
+                            Authorization: this.token
+                        }
                     });
                 let data = response.data;
                 this.data = data;
@@ -139,8 +148,14 @@ export default {
         },
         async showSellerUpdateModal(item) {
             this.isSellerUpdateModalVisible = true;
-            await axios
-                .get(`${API_BASE_URL}/${ENDPOINTS.SELLERS}/${item.id}`)
+            await api
+                .get(`/${ENDPOINTS.SELLERS}/${item.id}`,
+                    {
+                        headers: {
+                            Authorization: this.token
+                        }
+                    }
+                )
                 .then((res) => (this.seller = res.data))
             this.$emit('seller', this.seller);
             this.componentKey += 1;

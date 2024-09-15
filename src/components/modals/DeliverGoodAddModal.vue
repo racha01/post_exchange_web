@@ -69,6 +69,7 @@ export default {
             cashPrice: null,
             accrualsPrice: null,
             leftovers: 0,
+            token: this.$cookies.get('token')
         }
     },
     props: {
@@ -85,7 +86,11 @@ export default {
                     amount: `${this.amount}`,
                     leftovers: `${this.leftovers}`,
                     deliver_good_date: `${this.deliverGoodDate}`
-                });
+                }, {
+                headers: {
+                    Authorization: this.token
+                }
+            });
             res.data.json;
 
             this.$emit('close');
@@ -101,7 +106,11 @@ export default {
                     wholesale_price: `${this.wholesalePrice}`,
                     cash_price: `${this.cashPrice}`,
                     accruals_price: `${this.accrualsPrice}`,
-                });
+                }, {
+                headers: {
+                    Authorization: this.token
+                }
+            });
             res.data.json;
 
             this.$emit('close');

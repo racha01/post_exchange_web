@@ -74,6 +74,7 @@ export default {
         return {
             deliverGoodsCutoffData: [],
             date: [],
+            token: this.$cookies.get('token')
         }
     },
     components: {
@@ -101,6 +102,9 @@ export default {
                             start_date: this.date[0],
                             end_date: this.date[1]
                         },
+                        headers: {
+                            Authorization: this.token
+                        }
                     });
                 let data = response.data;
                 this.deliverGoodsCutoffData = data;

@@ -23,5 +23,4 @@ export default {
     </nav>
     <router-view></router-view>
   </div>
-
 </template>

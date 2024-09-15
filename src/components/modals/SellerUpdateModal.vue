@@ -33,6 +33,11 @@
 import axios from 'axios';
 import { API_BASE_URL, ENDPOINTS } from './../../../config';
 export default {
+    data(){
+        return{
+            token: this.$cookies.get('token')
+        }
+    },
     props: {
         seller: {
             id: String,
@@ -43,7 +48,16 @@ export default {
     name: "SellerUpdateModal",
     methods: {
         async updateData() {
-            const res = await axios.put(`${API_BASE_URL}/${ENDPOINTS.SELLERS}/${this.seller.id}`, { seller_code: `${this.sellerCode ?? this.seller.seller_code}`, seller_name: `${this.sellerName ?? this.seller.seller_name}` });
+            const res = await axios
+                .put(`${API_BASE_URL}/${ENDPOINTS.SELLERS}/${this.seller.id}`,
+                    {
+                        seller_code: `${this.sellerCode ?? this.seller.seller_code}`,
+                        seller_name: `${this.sellerName ?? this.seller.seller_name}`
+                    }, {
+                    headers: {
+                        Authorization: this.token
+                    }
+                });
 
             res.data.json;
             this.$emit('seller-update', res.data.json);

@@ -61,7 +61,7 @@
                                 :disabled="productData.has_previous_page == false">
                                 < </button>
                                     <button @click="fetchData((pageNo + 1), pageSize)"
-                                        :disabled="productData.has_next_page == false">></button> 
+                                        :disabled="productData.has_next_page == false">></button>
                         </div>
                     </td>
                 </tr>
@@ -108,7 +108,8 @@ export default {
             searchQuery: '',
             pageNo: PAGENERATION.PAGE_NO,
             pageSize: PAGENERATION.PAGE_SIZE,
-            sellerData: []
+            sellerData: [],
+            token: this.$cookies.get('token')
         };
     },
     mounted() {
@@ -135,6 +136,9 @@ export default {
                             page_no: pageNo,
                             page_size: pageSize,
                         },
+                        headers: {
+                            Authorization: this.token
+                        }
                     });
                 let data = response.data;
                 this.productData = data;
@@ -147,7 +151,12 @@ export default {
             this.isProductAddModalVisible = true;
 
             await axios
-                .get(`${API_BASE_URL}/${ENDPOINTS.SELLERS}`)
+                .get(`${API_BASE_URL}/${ENDPOINTS.SELLERS}`,
+                    {
+                        headers: {
+                            Authorization: this.token
+                        }
+                    })
                 .then((res) => (this.sellerData = res.data))
 
             this.$emit('sellers', this.sellerData.items);
@@ -157,7 +166,13 @@ export default {
         async showProductUpdateModal(item) {
             this.isProductUpdateModalVisible = true;
             let productResponse = await axios
-                .get(`${API_BASE_URL}/${ENDPOINTS.PRODUCTS}/${item.id}`)
+                .get(`${API_BASE_URL}/${ENDPOINTS.PRODUCTS}/${item.id}`,
+                    {
+                        headers: {
+                            Authorization: this.token
+                        }
+                    }
+                )
 
             let productData = productResponse.data;
             this.productDoc = productData;
@@ -165,7 +180,11 @@ export default {
             this.componentKey += 1;
 
             await axios
-                .get(`${API_BASE_URL}/${ENDPOINTS.SELLERS}`)
+                .get(`${API_BASE_URL}/${ENDPOINTS.SELLERS}`, {
+                    headers: {
+                        Authorization: this.token
+                    }
+                })
                 .then((res) => (this.sellerData = res.data))
 
             this.$emit('sellers', this.sellerData.items);

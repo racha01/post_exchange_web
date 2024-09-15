@@ -61,7 +61,6 @@
 import { uuid } from 'vue-uuid';
 import 'vue-select/dist/vue-select.css';
 import Fuse from 'fuse.js'
-import { computed } from 'vue';
 export default {
     name: 'PostExchangeStockDetailAddModal',
     props: {
@@ -105,9 +104,6 @@ export default {
             postExchangeProduct: {}
         }
     },
-    // computed:{
-    //     this.postExchangeProduct = this.postExchangeProduct
-    // },
     methods: {
         addData() {
             const product = {

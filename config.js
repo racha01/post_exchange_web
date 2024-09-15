@@ -6,7 +6,8 @@ export const ENDPOINTS = {
   DELIVER_GOODS: 'deliver-goods',
   DELIVER_GOODS_CUTOFF: 'deliver-goods/cut-off',
   POST_EXCHANGE_PRODUCTS: 'post-exchange-products',
-  POST_EXCHANGE_STOCKS: 'post-exchange-stocks'
+  POST_EXCHANGE_STOCKS: 'post-exchange-stocks',
+  USER: 'users'
 };
 
 export const PAGENERATION = {

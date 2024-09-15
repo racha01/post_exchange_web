@@ -7,6 +7,10 @@ const router = createRouter({
     routes: [
       {
         path: '/',
+        redirect: '/login'
+      },
+      {
+        path: '/home',
         name: 'home',
         component: Home
       },
@@ -49,7 +53,17 @@ const router = createRouter({
         path: '/deliver-good/cut-off-detail',
         name: 'deliverGoodCutoffDetail',
         component: () => import('@/components/DeliverGoodsCutoffDetail.vue')
-      }
+      },
+      {
+        path: '/login',
+        name: 'login',
+        component: () => import('@/components/Login.vue')
+      },
+      {
+        path: '/register',
+        name: 'register',
+        component: () => import('@/components/Register.vue')
+      },
       
     ]
   })

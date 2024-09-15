@@ -69,6 +69,7 @@ export default {
         return {
             isDropdownVisible: true,
             selectedValue: '',
+            token: this.$cookies.get('token')
         }
     },
     props: {
@@ -84,7 +85,11 @@ export default {
                     wholesale_price: `${this.wholesalePrice}`,
                     cash_price: `${this.cashPrice}`,
                     accruals_price: `${this.accrualsPrice}`,
-                });
+                }, {
+                headers: {
+                    Authorization: this.token
+                }
+            });
             res.data.json;
 
             this.$emit('close');
@@ -96,23 +101,6 @@ export default {
         updateToUppercase(event) {
             event.target.value = event.target.value.toUpperCase();
         },
-        // switchToInput() {
-        //     this.isDropdownVisible = false;
-        //     this.selectedValue = ''; 
-        // },
-        // handleBlur() {
-        //     if (!this.selectedValue) {
-        //         this.isDropdownVisible = true;
-        //     }
-        // },
-        // handleChange(event) {
-        //     if (event.target.value !== 'custom') {
-        //         this.isDropdownVisible = true;
-        //     }else{
-        //         this.selectedValue = ''
-        //         this.isDropdownVisible = false;
-        //     }
-        // }
     },
 }
 

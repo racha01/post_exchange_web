@@ -132,6 +132,7 @@ export default {
             sellerId: null,
             date: [],
             sellerName: '',
+            token: this.$cookies.get('token')
         };
     },
     methods: {
@@ -153,6 +154,9 @@ export default {
                             start_date: this.date[0],
                             end_date: this.date[1]
                         },
+                        headers: {
+                            Authorization: this.token
+                        }
                     });
                 let data = response.data;
                 this.deliverGoodData = data;
@@ -173,7 +177,11 @@ export default {
             this.isDeliverGoodAddModalVisible = true;
 
             await axios
-                .get(`${API_BASE_URL}/${ENDPOINTS.PRODUCTS}`)
+                .get(`${API_BASE_URL}/${ENDPOINTS.PRODUCTS}`, {
+                    headers: {
+                        Authorization: this.token
+                    }
+                })
                 .then((res) => (this.productData = res.data.items))
 
             this.$emit('products', this.productData);
@@ -183,7 +191,11 @@ export default {
         async showDeliverGoodUpdateModal(item) {
             this.isDeliverGoodUpdateModalVisible = true;
             let productResponse = await axios
-                .get(`${API_BASE_URL}/${ENDPOINTS.DELIVER_GOODS}/${item.id}`)
+                .get(`${API_BASE_URL}/${ENDPOINTS.DELIVER_GOODS}/${item.id}`, {
+                    headers: {
+                        Authorization: this.token
+                    }
+                })
 
             let productData = productResponse.data;
             this.deliverGoodDoc = productData;
@@ -191,7 +203,11 @@ export default {
             this.componentKey += 1;
 
             await axios
-                .get(`${API_BASE_URL}/${ENDPOINTS.PRODUCTS}`)
+                .get(`${API_BASE_URL}/${ENDPOINTS.PRODUCTS}`, {
+                    headers: {
+                        Authorization: this.token
+                    }
+                })
                 .then((res) => (this.productData = res.data.items))
 
             this.$emit('products', this.productData);

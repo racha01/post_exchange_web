@@ -20,7 +20,7 @@
                 </div>
                 <div class="item">
                     <label>ราคาเซ็น</label>
-                    <input v-model="accrualsPrice" type="number" >
+                    <input v-model="accrualsPrice" type="number">
                 </div>
                 <div class="item">
                     <label>ประเภท</label>
@@ -49,6 +49,11 @@ import { API_BASE_URL, ENDPOINTS } from './../../../config';
 import axios from 'axios';
 export default {
     name: 'PostExchangeProductAddModal',
+    data(){
+        return{
+            token: this.$cookies.get('token')
+        }
+    },
     methods: {
         async addData() {
             const res = await axios.post(`${API_BASE_URL}/${ENDPOINTS.POST_EXCHANGE_PRODUCTS}`,
@@ -58,6 +63,11 @@ export default {
                     cash_price: `${this.cashPrice}`,
                     accruals_price: `${this.accrualsPrice}`,
                     type: `${this.type}`
+                },
+                {
+                    headers: {
+                        Authorization: this.token
+                    }
                 });
 
             res.data.json;
@@ -134,7 +144,8 @@ export default {
     margin-bottom: 10px;
 }
 
-.modal-body input,select {
+.modal-body input,
+select {
     display: block;
     box-sizing: border-box;
     width: 100%;
@@ -191,10 +202,12 @@ export default {
     border-radius: 5px;
     font-size: 16px;
 }
+
 .item {
     padding: 0px;
     flex: 1 1 200px;
 }
+
 .first-item {
     padding: 0px;
     flex: 1 1 300px;

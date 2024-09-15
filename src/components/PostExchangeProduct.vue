@@ -83,7 +83,8 @@ export default {
             componentKey: 0,
             searchQuery: '',
             pageNo: PAGENERATION.PAGE_NO,
-            pageSize: PAGENERATION.PAGE_SIZE
+            pageSize: PAGENERATION.PAGE_SIZE,
+            token: this.$cookies.get('token')
         };
     },
     mounted() {
@@ -122,6 +123,9 @@ export default {
                             page_no: pageNo,
                             page_size: pageSize,
                         },
+                        headers:{
+                            Authorization: this.token
+                        }
                     });
                 let data = response.data;
                 this.postExchangeProductData = data;

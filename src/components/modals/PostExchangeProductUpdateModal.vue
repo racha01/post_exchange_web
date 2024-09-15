@@ -18,11 +18,11 @@
                     <label>ราคาสด</label>
                     <input v-model="cashPrice" type="number" :placeholder="postExchangeProdcut.cash_price">
                 </div>
-                <div  class="item">
+                <div class="item">
                     <label>ราคาเซ็น</label>
                     <input v-model="accrulsPrice" type="number" :placeholder="postExchangeProdcut.accruals_price">
                 </div>
-                <div  class="item">
+                <div class="item">
                     <label>ประเภท</label>
                     <select v-model="type">
                         <option value="" disabled v-show="isVisible">{{ postExchangeProdcut.type }}</option>
@@ -53,7 +53,8 @@ export default {
     data() {
         return {
             isVisible: false,
-            type: ''
+            type: '',
+            token: this.$cookies.get('token')
         }
     },
     props: {
@@ -74,6 +75,10 @@ export default {
                 cash_price: `${this.cashPrice ?? this.postExchangeProdcut.cash_price}`,
                 accruals_price: `${this.accrualsPrice ?? this.postExchangeProdcut.accruals_price}`,
                 type: `${!this.type ? this.postExchangeProdcut.type : this.type}`
+            }, {
+                headers: {
+                    Authorization: this.token
+                }
             });
 
             res.data.json;
@@ -215,6 +220,7 @@ select {
     padding: 0px;
     flex: 1 1 200px;
 }
+
 .first-item {
     padding: 0px;
     flex: 1 1 300px;

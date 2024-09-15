@@ -17,7 +17,7 @@
             </section>
 
             <footer class="modal-footer">
-                <button type="button" class="btn-green"  @click="addData">
+                <button type="button" class="btn-green" @click="addData">
                     เพิ่มข้อมูล
                 </button>
                 <button type="button" class="btn-gray" @click="close">
@@ -33,10 +33,24 @@ import axios from 'axios';
 import { API_BASE_URL, ENDPOINTS } from './../../../config';
 export default {
     name: "SellerAddModal",
+    data(){
+        return{
+            token: this.$cookies.get('token')
+        }
+    },
     methods: {
         async addData() {
             console.log(ENDPOINTS)
-            const res = await axios.post(`${API_BASE_URL}/${ENDPOINTS.SELLERS}`, { seller_code: `${this.sellerCode}`, seller_name: `${this.sellerName}` });
+            const res = await axios
+                .post(`${API_BASE_URL}/${ENDPOINTS.SELLERS}`,
+                    {
+                        seller_code: `${this.sellerCode}`,
+                        seller_name: `${this.sellerName}`,
+                    }, {
+                    headers: {
+                        Authorization: this.token
+                    }
+                });
 
             res.data.json;
 
@@ -81,7 +95,7 @@ export default {
     display: flex;
 }
 
-.modal-header p{
+.modal-header p {
     font-size: 20px;
 }
 

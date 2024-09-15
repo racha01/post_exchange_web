@@ -67,6 +67,7 @@ export default {
             isVisible: false,
             sellerName: this.deliverGood.seller_name,
             productId: '',
+            token: this.$cookies.get('token')
         }
     },
     props: {
@@ -99,7 +100,12 @@ export default {
                     accruals_price: `${this.accrualsPrice ?? this.deliverGood.accruals_price}`,
                     amount: `${this.amount ?? this.deliverGood.amount}`,
                     leftovers: `${this.leftovers ?? this.deliverGood.leftovers}`,
-                    deliver_good_date: `${!this.deliverGoodDate ? this.deliverGood.deliver_good_date:  this.deliverGoodDate}`
+                    deliver_good_date: `${!this.deliverGoodDate ? this.deliverGood.deliver_good_date : this.deliverGoodDate}`
+                },
+                {
+                    headers: {
+                        Authorization: this.token
+                    }
                 });
             res.data.json;
             this.$emit('deliver-good-update', res.data.json);
@@ -126,7 +132,7 @@ export default {
             const dd = String(date.getUTCDate()).padStart(2, '0');
             this.deliverGoodDate = `${yyyy}-${mm}-${dd}`;
         }
-    }, 
+    },
 }
 </script>
 

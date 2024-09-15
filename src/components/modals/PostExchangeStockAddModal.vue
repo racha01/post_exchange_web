@@ -37,7 +37,6 @@
 </template>
 
 <script>
-import emitter from './../../eventBus';
 const months = [
     "มกราคม", "กุมภาพันธ์", "มีนาคม",
     "เมษายน", "พฤษภาคม", "มิถุนายน",
@@ -46,31 +45,6 @@ const months = [
 ];
 export default {
     name: 'PostExchangeStockAddModal',
-    // props: {
-    //     monthly: String,
-    //     invoice_date: String
-    //     // products: [{
-    //     //     cash_price: Number,
-    //     //     accruals_price: Number,
-    //     //     qty_per_unit: Number,
-    //     //     total_cash_price: Number,
-    //     //     total_accruals_price: Number,
-    //     //     net_profit_cash_price: Number,
-    //     //     net_profit_accruals_price: Number,
-    //     //     product_name: String,
-    //     //     barcode_number: String,
-    //     //     unit_qty: Number,
-    //     //     unit_price: Number,
-    //     //     total_price: Number
-    //     // }],
-    //     // excludedProducts: [{
-    //     //     product_name: String,
-    //     //     barcode_number: String,
-    //     //     unit_qty: Number,
-    //     //     unit_price: Number,
-    //     //     total_price: Number
-    //     // }]
-    // },
     data() {
         return {
             monthAndYears: []

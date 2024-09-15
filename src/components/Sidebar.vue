@@ -5,7 +5,7 @@ import { RouterLink, RouterView } from 'vue-router'
     <div class="content">
         <div class="box logo">logo</div>
         <div class="box">
-            <RouterLink to="/" id="menu">หน้าหลัก</RouterLink>
+            <RouterLink to="/home" id="menu">หน้าหลัก</RouterLink>
         </div>
         <div class="box">
             <RouterLink to="/seller" id="menu">ผู้ฝากขาย</RouterLink>
@@ -32,14 +32,12 @@ import { RouterLink, RouterView } from 'vue-router'
 <style scoped>
 .content {
     background-color: rgb(0, 0, 255);
-    /* background-color: black; */
     text-align: center;
     align-content: center;
     width: 100%;
     position: sticky;
     top: 0px;
     height: 100vh;
-    padding-top: -100px;
     margin-top: 0px;
 }
 

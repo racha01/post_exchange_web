@@ -17,10 +17,12 @@ import '@vuepic/vue-datepicker/dist/main.css'
 
 import vSelect from 'vue-select'
 
+import VueCookies from 'vue-cookies'
 
 const app = withUUID(createApp(App));
 app.component('VueDatePicker', VueDatePicker);
 app.component('v-select', vSelect)
+app.use(VueCookies)
 app.use(router);
 app.use(store);
 app.component("font-awesome-icon", FontAwesomeIcon);
